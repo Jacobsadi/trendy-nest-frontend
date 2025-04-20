@@ -1,0 +1,25 @@
+my-nextjs-app/
+├── app/
+│   ├── layout.tsx                // Global layout for all pages
+│   ├── page.tsx                  // Landing/home page
+│   ├── admin/                    // Admin-specific pages (e.g., managing users & products)
+│   │   ├── layout.tsx            // Admin layout (maybe with sidebar navigation)
+│   │   └── page.tsx              // Admin dashboard landing page
+│   │   └── users/
+│   │       └── page.tsx          // Page to list and manage users
+│   │   └── products/
+│   │       └── page.tsx          // Page to list and manage products
+│   ├── seller/                   // Seller-specific pages
+│   │   ├── layout.tsx            // Seller layout (e.g., sidebar with options for product management)
+│   │   └── page.tsx              // Seller dashboard landing page
+│   │   └── products/
+│   │       └── page.tsx          // Page for seller-specific product management
+│   ├── buyer/                    // Buyer-specific pages
+│   │   ├── layout.tsx            // Buyer layout (including navigation for orders, etc.)
+│   │   └── page.tsx              // Buyer dashboard landing page
+│   │   └── orders/
+│   │       └── page.tsx          // Page to view buyer orders and order details
+├── public/                       // Static assets (images, icons, etc.)
+├── styles/                       // Global CSS and styling
+├── .env.local                    // Environment variables, such as API endpoints
+└── next.config.js

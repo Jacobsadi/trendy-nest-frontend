@@ -1,0 +1,66 @@
+when user created in clerk 
+"use node";
+import type { WebhookEvent } from "@clerk/clerk-sdk-node";
+import { v } from "convex/values";
+import { Webhook } from "svix";
+import { internalAction } from "./_generated/server";
+export const fulfilled = internalAction({
+  args: { headers: v.any(), payload: v.string() },
+  handler: async (ctx, args) => {
+    const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET!);
+    const event = wh.verify(args.payload, args.headers) as WebhookEvent;
+    return event;
+  },
+});
+///////////////////////////////////////////////////////////
+http.route({
+  path: "/clerk",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const payloadHeader = request.headers;
+    const payloadString = await request.text();
+
+    try {
+      const result = await ctx.runAction(internal.clerk.fulfilled, {
+        payload: payloadString,
+        headers: {
+          "svix-id": payloadHeader.get("svix-id")!,
+          "svix-timestamp": payloadHeader.get("svix-timestamp")!,
+          "svix-signature": payloadHeader.get("svix-signature")!,
+        },
+      });
+      switch (result.type) {
+        case "user.created":
+          await ctx.runMutation(internal.users.createUser, {
+            userId: result.data.id,
+            name: result.data.first_name!,
+            email: result.data.email_addresses[0].email_address,
+          });
+        //   break;
+        // case "user.updated":
+        //   await ctx.runMutation(api.documents.updateUser, {
+        //     email: result.data.email_addresses[0].email_address,
+        //     name: result.data.first_name,
+        //   });
+        //   break;
+        // case "user.deleted":
+        //   await ctx.runMutation(api.documents.deleteUser, {
+        //     email: result.data.email_addresses[0].email_address,
+        //   });
+        //   break;
+      }
+      return new Response(null, {
+        status: 200,
+      });
+    } catch (err) {
+      console.error("Error processing clerk webhook:", err);
+      return new Response(
+        JSON.stringify({ error: "Failed to process the webhook" }),
+        {
+          status: 400,
+        }
+      );
+    }
+  }),
+});
+Stripe hooks 
