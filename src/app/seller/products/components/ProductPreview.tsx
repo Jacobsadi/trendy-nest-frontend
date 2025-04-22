@@ -7,7 +7,12 @@ interface Props {
   setSelectedSize: (size: string) => void;
   selectedColors: string[];
   setSelectedColors: (colors: string[]) => void;
-  imageUrls: string[]; // ← added
+  imageUrls: string[];
+  title: string;
+  description: string;
+  price: string;
+  onCreate: () => void;
+  onCancel: () => void;
 }
 
 const previewColors = ["lightblue", "orange", "white", "red"];
@@ -18,6 +23,11 @@ export default function ProductPreview({
   selectedColors,
   setSelectedColors,
   imageUrls,
+  title,
+  price,
+  description,
+  onCreate,
+  onCancel,
 }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -48,7 +58,7 @@ export default function ProductPreview({
   return (
     <div className="bg-gray-800 rounded-lg p-6">
       {/* Image Preview with Carousel */}
-      <div className="bg-gray-700 rounded-lg p-6 flex justify-center mb-6">
+      <div className="bg-amber-200 rounded-lg p-6 flex justify-center mb-6">
         <div className="relative w-full aspect-[3/4] max-w-xs">
           {imageUrls.length > 0 ? (
             <>
@@ -88,20 +98,23 @@ export default function ProductPreview({
 
       <div className="space-y-4">
         <h2 className="text-lg font-medium text-gray-300">
-          Men Black Slim Fit T-shirt{" "}
+          {title || "Product Name"}{" "}
           <span className="text-gray-500 text-sm">(Fashion)</span>
         </h2>
+        {description && <p className="text-sm text-gray-400">{description}</p>}
 
         <div>
           <p className="text-gray-400 text-sm mb-1">Price :</p>
           <div className="flex items-center gap-2">
             <span className="text-gray-400 line-through">$100</span>
-            <span className="text-white font-medium">$80</span>
+            <span className="text-white font-medium">
+              {price ? `$${parseFloat(price).toFixed(2)}` : "$0.00"}
+            </span>
             <span className="text-green-500 text-xs">(20% Off)</span>
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <p className="text-gray-400 text-sm mb-2">Size :</p>
           <div className="flex gap-2">
             {["S", "M", "XL", "XXL"].map((size) => (
@@ -118,9 +131,9 @@ export default function ProductPreview({
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div>
+        {/* <div>
           <p className="text-gray-400 text-sm mb-2">Colors :</p>
           <div className="flex gap-2">
             {previewColors.map((color) => (
@@ -136,13 +149,19 @@ export default function ProductPreview({
               />
             ))}
           </div>
-        </div>
+        </div> */}
 
         <div className="flex gap-3 mt-6">
-          <Button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white">
+          <Button
+            className="flex-1 bg-gray-700 hover:bg-gray-600 text-white"
+            onClick={onCreate}
+          >
             Create Product
           </Button>
-          <Button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white">
+          <Button
+            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+            onClick={onCancel}
+          >
             Cancel
           </Button>
         </div>

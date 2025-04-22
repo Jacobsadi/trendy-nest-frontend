@@ -23,3 +23,22 @@ my-nextjs-app/
 ├── styles/                       // Global CSS and styling
 ├── .env.local                    // Environment variables, such as API endpoints
 └── next.config.js
+
+
+data received from http://localhost:3001/products
+[
+  {
+    "id": "51e844fd-bb9d-41d3-a1f3-fa905d207ff5",
+    "title": "Wireless Mouse",
+    "description": "Ergonomic wireless mouse with adjustable DPI and silent clicks",
+    "price": 29.99,
+    "quantity": 150,
+    "sellerId": "user_2ZgkAq1KXyFZ9qA1VrLWxKj8EXa",
+    "images": [
+      "https://cdn.example.com/prod/mouse-front.jpg",
+      "https://cdn.example.com/prod/mouse-back.jpg"
+    ],
+    "createdAt": "2025-04-22T08:45:20.171Z",
+    "updatedAt": "2025-04-22T08:45:20.171Z"
+  }
+]

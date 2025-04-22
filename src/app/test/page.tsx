@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import React, { useState } from "react";
 
 const CreateProductPage = () => {
@@ -11,7 +12,8 @@ const CreateProductPage = () => {
     sellerId: "",
     images: [""], // Start with one input for images
   });
-
+  const { user } = useUser();
+  console.log("user id is =============================>", user?.id);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -54,7 +56,7 @@ const CreateProductPage = () => {
       if (!res.ok) throw new Error("Failed to create product");
       const data = await res.json();
       setMessage("✅ Product created!");
-      console.log(data);
+      console.log("✅ Product created!=======================>", data);
     } catch (err: any) {
       setMessage(`❌ ${err.message}`);
     } finally {
