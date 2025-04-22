@@ -11,11 +11,12 @@ interface Props {
   title: string;
   description: string;
   price: string;
+  quantity: string;
   onCreate: () => void;
   onCancel: () => void;
 }
 
-const previewColors = ["lightblue", "orange", "white", "red"];
+// const previewColors = ["lightblue", "orange", "white", "red"];
 
 export default function ProductPreview({
   selectedSize,
@@ -25,6 +26,7 @@ export default function ProductPreview({
   imageUrls,
   title,
   price,
+  quantity,
   description,
   onCreate,
   onCancel,
@@ -58,27 +60,27 @@ export default function ProductPreview({
   return (
     <div className="bg-gray-800 rounded-lg p-6">
       {/* Image Preview with Carousel */}
-      <div className="bg-amber-200 rounded-lg p-6 flex justify-center mb-6">
-        <div className="relative w-full aspect-[3/4] max-w-xs">
+      <div className="bg-gray-700 rounded-lg mb-6 overflow-hidden">
+        <div className="relative w-full aspect-[3/4] max-h-80 mx-auto">
           {imageUrls.length > 0 ? (
             <>
               <Image
                 src={imageUrls[currentImageIndex]}
                 alt={`Image ${currentImageIndex + 1}`}
                 fill
-                className="object-contain rounded-lg"
+                className="object-contain"
               />
               {imageUrls.length > 1 && (
                 <>
                   <button
                     onClick={handlePrevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 px-2 py-1 text-white text-lg rounded hover:bg-black"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-lg px-2 py-1 rounded hover:bg-black"
                   >
                     ‹
                   </button>
                   <button
                     onClick={handleNextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 px-2 py-1 text-white text-lg rounded hover:bg-black"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-lg px-2 py-1 rounded hover:bg-black"
                   >
                     ›
                   </button>
@@ -87,7 +89,7 @@ export default function ProductPreview({
             </>
           ) : (
             <Image
-              src="/placeholder.svg?height=256&width=192"
+              src="/placeholder.svg"
               alt="T-shirt preview"
               fill
               className="object-contain opacity-40"
@@ -102,10 +104,18 @@ export default function ProductPreview({
           <span className="text-gray-500 text-sm">(Fashion)</span>
         </h2>
         {description && <p className="text-sm text-gray-400">{description}</p>}
-
         <div>
-          <p className="text-gray-400 text-sm mb-1">Price :</p>
           <div className="flex items-center gap-2">
+            <p className="text-gray-400 text-sm mb-1">Quantity :</p>
+
+            <span className="text-white font-medium">
+              {quantity ? `${parseFloat(quantity)}` : "0"}
+            </span>
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="text-gray-400 text-sm mb-1">Price :</p>
             <span className="text-gray-400 line-through">$100</span>
             <span className="text-white font-medium">
               {price ? `$${parseFloat(price).toFixed(2)}` : "$0.00"}

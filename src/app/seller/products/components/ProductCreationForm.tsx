@@ -101,7 +101,11 @@ export default function ProductCreationForm() {
       if (!res.ok) throw new Error("Failed to create product");
       const data = await res.json();
       setMessage(" Product created!");
-      console.log(data);
+      handleCancel();
+      console.log(
+        " Product created!==================================================>",
+        data
+      );
     } catch (err: any) {
       setMessage(` ${err.message}`);
     } finally {
@@ -122,6 +126,7 @@ export default function ProductCreationForm() {
           title={title}
           description={description}
           price={price}
+          quantity={quantity}
           onCreate={handleSubmit}
           onCancel={handleCancel}
         />
@@ -141,7 +146,7 @@ export default function ProductCreationForm() {
             quantity={quantity}
             setQuantity={setQuantity}
           />
-          <div className="text-right">
+          {/* <div className="text-right">
             <button
               onClick={handleSubmit}
               disabled={loading}
@@ -150,7 +155,7 @@ export default function ProductCreationForm() {
               {loading ? "Creating..." : "Create Product"}
             </button>
             {message && <p className="mt-4 text-center text-sm">{message}</p>}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
