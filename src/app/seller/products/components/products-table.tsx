@@ -135,13 +135,15 @@ export default async function ProductsTable() {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-orange-400 hover:text-orange-300"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    <Link href={`/seller/products/${product.id}/edit`}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-orange-400 hover:text-orange-300"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       size="icon"

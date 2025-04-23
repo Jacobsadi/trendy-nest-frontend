@@ -3,26 +3,19 @@ import Image from "next/image";
 import { useState } from "react";
 
 interface Props {
-  selectedSize: string;
-  setSelectedSize: (size: string) => void;
-  selectedColors: string[];
-  setSelectedColors: (colors: string[]) => void;
   imageUrls: string[];
   title: string;
   description: string;
   price: string;
   quantity: string;
-  onCreate: () => void;
+  mode?: "create" | "edit";
+  onCreate: (data: any) => void;
   onCancel: () => void;
 }
 
 // const previewColors = ["lightblue", "orange", "white", "red"];
 
 export default function ProductPreview({
-  selectedSize,
-  setSelectedSize,
-  selectedColors,
-  setSelectedColors,
   imageUrls,
   title,
   price,
@@ -30,20 +23,9 @@ export default function ProductPreview({
   description,
   onCreate,
   onCancel,
+  mode,
 }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const handleSizeSelect = (size: string) => {
-    setSelectedSize(size);
-  };
-
-  const handleColorSelect = (color: string) => {
-    if (selectedColors.includes(color)) {
-      setSelectedColors(selectedColors.filter((c) => c !== color));
-    } else {
-      setSelectedColors([...selectedColors, color]);
-    }
-  };
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) =>
@@ -166,7 +148,7 @@ export default function ProductPreview({
             className="flex-1 bg-gray-700 hover:bg-gray-600 text-white"
             onClick={onCreate}
           >
-            Create Product
+            {mode === "edit" ? "Update Product" : "Create Product"}
           </Button>
           <Button
             className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
