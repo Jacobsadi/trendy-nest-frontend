@@ -1,0 +1,22 @@
+Guest / Public
+TODO: TODO:  / → Landing page
+TODO:  /login → Login page
+TODO:  /register → Register page
+TODO:  /products → Browse all products
+TODO:  /products/[id] → Product detail page
+TODO:  /search → Search page (optional)
+Buyer
+TODO:  /cart → Cart page
+TODO:  /checkout → Checkout/payment page
+TODO:  /orders → Order history
+TODO:  /profile → Manage profile
+TODO:  /chat → AI chatbot page (optional)
+Seller
+TODO:  /seller → Seller dashboard
+  /seller/products → Manage product listings
+TODO:  /seller/orders → Incoming orders
+  /seller/orders/[id] → Order detail (mark shipped)
+Admin
+TODO:  /admin → Admin dashboard
+TODO:  /admin/users → Manage user accounts
+TODO:  /admin/products → Manage product listings

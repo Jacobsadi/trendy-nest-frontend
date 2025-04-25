@@ -42,3 +42,10 @@ data received from http://localhost:3001/products
     "updatedAt": "2025-04-22T08:45:20.171Z"
   }
 ]
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
