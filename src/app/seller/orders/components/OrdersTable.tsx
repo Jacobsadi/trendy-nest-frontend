@@ -103,9 +103,9 @@ export default function OrdersTable({ orders }: { orders: OrderRowType[] }) {
         <table className="w-full">
           <thead className="sticky top-0 bg-gray-800 z-10">
             <tr className="border-t border-b border-gray-700">
-              <th className="p-4 text-left text-gray-400">Order ID</th>
+              <th className="p-4 text-left text-gray-400">Customer Email</th>
               <th className="p-4 text-left text-gray-400">Created at</th>
-              <th className="p-4 text-left text-gray-400">Customer</th>
+              <th className="p-4 text-left text-gray-400">Customer Address</th>
               <th className="p-4 text-left text-gray-400">Priority</th>
               <th className="p-4 text-left text-gray-400">Total</th>
               <th className="p-4 text-left text-gray-400">Payment Status</th>
@@ -116,8 +116,8 @@ export default function OrdersTable({ orders }: { orders: OrderRowType[] }) {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o) => (
-              <OrderRow key={o.id} order={o} />
+            {orders.map((o, index = 0) => (
+              <OrderRow key={index + 1} order={o} />
             ))}
           </tbody>
         </table>

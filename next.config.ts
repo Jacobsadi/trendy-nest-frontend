@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "logo-generator-sadi.s3.ap-southeast-2.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.example.com",
+        pathname: "/**",
+      },
     ],
   },
 };

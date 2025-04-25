@@ -12,7 +12,7 @@ export interface RawOrder {
 export interface OrderRow {
   id: string;
   createdAt: string;
-  customer: string;
+  customer: string; // now formatted address
   priority: string;
   total: string;
   paymentStatus: "Paid" | "Unpaid";
@@ -25,7 +25,7 @@ const MOCK_ORDERS: OrderRow[] = [
   {
     id: "#583488/80",
     createdAt: "Apr 23, 2024",
-    customer: "Gail C. Anderson",
+    customer: "123 Elm St, Algiers, Algeria",
     priority: "Normal",
     total: "$1,230.00",
     paymentStatus: "Unpaid",
@@ -36,7 +36,7 @@ const MOCK_ORDERS: OrderRow[] = [
   {
     id: "#456754/80",
     createdAt: "Apr 20, 2024",
-    customer: "Jung S. Ayala",
+    customer: "55 Sunset Blvd, Tokyo, Japan",
     priority: "Normal",
     total: "$987.00",
     paymentStatus: "Paid",
@@ -47,7 +47,7 @@ const MOCK_ORDERS: OrderRow[] = [
   {
     id: "#578246/80",
     createdAt: "Apr 19, 2024",
-    customer: "David A. Arnold",
+    customer: "99 King Rd, Berlin, Germany",
     priority: "High",
     total: "$1,478.00",
     paymentStatus: "Paid",
@@ -64,25 +64,69 @@ export async function fetchOrders(): Promise<OrderRow[]> {
 
     const data: RawOrder[] = await res.json();
     if (Array.isArray(data) && data.length) {
-      return data.map((o) => ({
-        id: o.id,
-        createdAt: new Date(o.createdAt).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }),
-        customer: o.buyerId,
-        priority: "Normal",
-        total: `$${Number(o.total).toFixed(2)}`,
-        paymentStatus: o.status === "PENDING" ? "Unpaid" : "Paid",
-        items: o.items?.length ?? 0,
-        deliveryNumber: "-",
-        orderStatus: o.status,
-      }));
+      const enrichedOrders = await Promise.all(
+        data.map(async (order) => {
+          try {
+            const buyerRes = await fetch(
+              `http://localhost:3004/users/${order.buyerId}`
+            );
+            const buyerData = await buyerRes.json();
+
+            console.log("BUYER DATA ===================> ", buyerData);
+
+            const address = buyerData?.addresses?.home;
+            const formattedAddress = address
+              ? `${address.street}, ${address.city}, ${address.country}`
+              : "Unknown Address";
+
+            return {
+              id: buyerData.email,
+              createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              customer: formattedAddress, // ⬅ replaces buyerId
+              priority: "Normal",
+              total: `$${Number(order.total).toFixed(2)}`,
+              paymentStatus: (order.status === "PENDING"
+                ? "Unpaid"
+                : "Paid") as "Paid" | "Unpaid",
+
+              items: order.items?.length ?? 0,
+              deliveryNumber: "-",
+              orderStatus: order.status,
+            };
+          } catch {
+            // fallback if buyer fetch fails
+            return {
+              id: order.id,
+              createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              customer: "Unknown Address",
+              priority: "Normal",
+              total: `$${Number(order.total).toFixed(2)}`,
+              paymentStatus: (order.status === "PENDING"
+                ? "Unpaid"
+                : "Paid") as "Paid" | "Unpaid",
+
+              items: order.items?.length ?? 0,
+              deliveryNumber: "-",
+              orderStatus: order.status,
+            };
+          }
+        })
+      );
+
+      return enrichedOrders;
     }
-  } catch {
-    // fallback silently
+  } catch (err) {
+    console.error("Failed to fetch orders or buyers:", err);
   }
+
   return MOCK_ORDERS;
 }
 
