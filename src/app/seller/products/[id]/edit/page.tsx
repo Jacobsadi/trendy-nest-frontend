@@ -1,19 +1,13 @@
+import { fetchProductById } from "@/lib/services/products";
 import ProductCreationForm from "../../components/ProductCreationForm";
-
-async function getProduct(id: string) {
-  const res = await fetch(`http://localhost:3001/products/${id}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error("Failed to fetch product");
-  return res.json();
-}
 
 export default async function EditProductPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>; // notice Promise<>
 }) {
-  const product = await getProduct(params.id);
+  const { id } = await params; // ✅ first await params
+  const product = await fetchProductById(id);
 
   const initialValues = {
     id: product.id,

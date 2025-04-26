@@ -1,8 +1,5 @@
-// src/app/seller/orders/components/utils.ts
-
-import { MOCK_ORDERS } from "@/lib/mockData";
 import { OrderRow, RawOrder } from "@/lib/types";
-
+import { MOCK_ORDERS } from "../mockData";
 export async function fetchOrders(): Promise<OrderRow[]> {
   try {
     const res = await fetch("http://localhost:3002/orders");

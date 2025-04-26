@@ -2,6 +2,7 @@
 
 import Header from "@/app/buyer/components/header";
 import { Button } from "@/components/ui/button";
+import { fetchProductById } from "@/lib/services/products";
 import {
   Check,
   ChevronLeft,
@@ -31,7 +32,7 @@ const mockProductData = {
   id: "default",
   title: "Wireless Mouse",
   description:
-    "Ergonomic wireless mouse with adjustable DPI and silent clicks. This premium mouse features a comfortable grip design that reduces hand fatigue during extended use. The high-precision optical sensor provides accurate tracking on most surfaces. With adjustable DPI settings, you can customize the sensitivity to match your workflow. The silent click technology reduces noise by up to 90% compared to traditional mice, making it perfect for quiet environments.",
+    "Ergonomic wireless mouse with adjustable aking it perfect for quiet environments.",
   price: 12,
   quantity: 10,
   sellerId: "user_2w50OFCAAy7DEjz3yruHHAtDODm",
@@ -58,29 +59,23 @@ export default function ProductDetails({ params }: { params: { id: string } }) {
   const { id } = use(params as unknown as Promise<{ id: string }>);
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
+    const loadProductDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3001/products/${id}`);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch product: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setProduct(data);
-        console.log("Product data fetched:", data);
+        const fetchedProduct = await fetchProductById(id);
+        setProduct(fetchedProduct);
+        console.log("Product data fetched:", fetchedProduct);
       } catch (err) {
-        console.error("Error fetching product details:", err);
+        console.error("Error loading product details:", err);
         setError(true);
-        // Use mock data as fallback
-        setProduct(mockProductData as Product);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProductDetails();
+    if (id) {
+      loadProductDetails();
+    }
   }, [id]);
 
   const incrementQuantity = () => {

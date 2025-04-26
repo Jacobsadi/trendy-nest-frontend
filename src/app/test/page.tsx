@@ -1,19 +1,18 @@
 "use client";
 
+import { createProduct } from "@/lib/services/products";
 import { useUser } from "@clerk/nextjs";
 import React, { useState } from "react";
 
 const CreateProductPage = () => {
+  const { user } = useUser();
   const [form, setForm] = useState({
     title: "",
     description: "",
     price: "",
     quantity: "",
-    sellerId: "",
-    images: [""], // Start with one input for images
+    images: [""],
   });
-  const { user } = useUser();
-  console.log("user id is =============================>", user?.id);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -21,13 +20,15 @@ const CreateProductPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (index: number, value: string) => {
-    const updatedImages = [...form.images];
-    updatedImages[index] = value;
-    setForm({ ...form, images: updatedImages });
+    setForm((prev) => {
+      const updatedImages = [...prev.images];
+      updatedImages[index] = value;
+      return { ...prev, images: updatedImages };
+    });
   };
 
   const addImageField = () => {
@@ -40,24 +41,30 @@ const CreateProductPage = () => {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:3001/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: form.title,
-          description: form.description,
-          price: parseFloat(form.price),
-          quantity: parseInt(form.quantity),
-          sellerId: form.sellerId,
-          images: form.images.filter((img) => img.trim() !== ""),
-        }),
-      });
+      if (!user?.id) throw new Error("User not authenticated");
 
-      if (!res.ok) throw new Error("Failed to create product");
-      const data = await res.json();
+      const productData = {
+        title: form.title,
+        description: form.description,
+        price: parseFloat(form.price),
+        quantity: parseInt(form.quantity),
+        sellerId: user.id, // ✅ Auto-fill from Clerk
+        images: form.images.filter((img) => img.trim() !== ""),
+      };
+
+      const result = await createProduct(productData);
       setMessage("✅ Product created!");
-      console.log("✅ Product created!=======================>", data);
+      console.log("✅ Product created! =========================>", result);
+
+      setForm({
+        title: "",
+        description: "",
+        price: "",
+        quantity: "",
+        images: [""],
+      });
     } catch (err: any) {
+      console.error("❌ Error creating product:", err);
       setMessage(`❌ ${err.message}`);
     } finally {
       setLoading(false);
@@ -98,14 +105,6 @@ const CreateProductPage = () => {
           type="number"
           placeholder="Quantity"
           value={form.quantity}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          name="sellerId"
-          placeholder="Seller ID"
-          value={form.sellerId}
           onChange={handleChange}
           className="w-full p-2 border rounded"
           required

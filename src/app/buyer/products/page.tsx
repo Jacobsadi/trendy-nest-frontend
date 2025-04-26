@@ -1,102 +1,11 @@
 "use client";
 
+import { fetchProducts } from "@/lib/services/products";
+import { Product } from "@/lib/types";
 import { useEffect, useState } from "react";
 import Cart from "../components/cart";
 import Header from "../components/header";
 import ProductGrid from "../components/product-grid";
-
-export interface Product {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  quantity: number;
-  sellerId: string;
-  images: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-const mockProducts: Product[] = [
-  {
-    id: "3",
-    title: "Ultrawide Monitor",
-    description: "34-inch curved ultrawide monitor with 144Hz refresh rate",
-    price: 349.99,
-    quantity: 30,
-    sellerId: "a1f5c3d2-4b6e-7f89-0abc-def123456789",
-    images: [
-      "https://logo-generator-sadi.s3.ap-southeast-2.amazonaws.com/seller-products/1745577609990_toksccyd4ka_p-7.png",
-    ],
-    createdAt: "2025-04-19T14:45:22.000Z",
-    updatedAt: "2025-04-19T14:45:22.000Z",
-  },
-  {
-    id: "4",
-    title: "Wireless Earbuds",
-    description: "Noise-cancelling wireless earbuds with 24-hour battery life",
-    price: 79.99,
-    quantity: 200,
-    sellerId: "a1f5c3d2-4b6e-7f89-0abc-def123456789",
-    images: [
-      "https://logo-generator-sadi.s3.ap-southeast-2.amazonaws.com/seller-products/1745577609990_toksccyd4ka_p-7.png",
-    ],
-    createdAt: "2025-04-18T09:20:45.000Z",
-    updatedAt: "2025-04-18T09:20:45.000Z",
-  },
-  {
-    id: "5",
-    title: "Gaming Headset",
-    description: "Surround sound gaming headset with detachable microphone",
-    price: 69.99,
-    quantity: 120,
-    sellerId: "a1f5c3d2-4b6e-7f89-0abc-def123456789",
-    images: [
-      "https://logo-generator-sadi.s3.ap-southeast-2.amazonaws.com/seller-products/1745577609990_toksccyd4ka_p-7.png",
-    ],
-    createdAt: "2025-04-17T16:10:33.000Z",
-    updatedAt: "2025-04-17T16:10:33.000Z",
-  },
-  {
-    id: "6",
-    title: "Laptop Stand",
-    description: "Adjustable aluminum laptop stand with cooling ventilation",
-    price: 39.99,
-    quantity: 180,
-    sellerId: "a1f5c3d2-4b6e-7f89-0abc-def123456789",
-    images: [
-      "https://logo-generator-sadi.s3.ap-southeast-2.amazonaws.com/seller-products/1745577609990_toksccyd4ka_p-7.png",
-    ],
-    createdAt: "2025-04-16T11:25:18.000Z",
-    updatedAt: "2025-04-16T11:25:18.000Z",
-  },
-  {
-    id: "7",
-    title: "Wireless Charger",
-    description:
-      "Fast wireless charging pad compatible with all Qi-enabled devices",
-    price: 24.99,
-    quantity: 250,
-    sellerId: "a1f5c3d2-4b6e-7f89-0abc-def123456789",
-    images: [
-      "https://logo-generator-sadi.s3.ap-southeast-2.amazonaws.com/seller-products/1745577609990_toksccyd4ka_p-7.png",
-    ],
-    createdAt: "2025-04-15T13:40:55.000Z",
-    updatedAt: "2025-04-15T13:40:55.000Z",
-  },
-  {
-    id: "8",
-    title: "External SSD",
-    description: "1TB portable external SSD with USB-C connection",
-    price: 129.99,
-    quantity: 60,
-    sellerId: "a1f5c3d2-4b6e-7f89-0abc-def123456789",
-    images: [
-      "https://logo-generator-sadi.s3.ap-southeast-2.amazonaws.com/seller-products/1745577609990_toksccyd4ka_p-7.png",
-    ],
-    createdAt: "2025-04-14T15:55:40.000Z",
-    updatedAt: "2025-04-14T15:55:40.000Z",
-  },
-];
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -108,26 +17,19 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3001/products");
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await response.json();
-        // If data is an array, use it directly, otherwise wrap the single item in an array
-        setProducts(Array.isArray(data) ? data : [data]);
+        const fetchedProducts = await fetchProducts();
+        setProducts(fetchedProducts);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error loading products:", error);
         setError(true);
-        // Use mock data if fetch fails
-        setProducts(mockProducts);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    loadProducts();
   }, []);
 
   const addToCart = (product: Product) => {

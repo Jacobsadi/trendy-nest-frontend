@@ -7,38 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { mockProducts } from "@/lib/mockData";
+import { fetchProducts } from "@/lib/services/products";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-async function getProducts() {
-  try {
-    const res = await fetch("http://localhost:3001/products", {
-      cache: "no-store",
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch products");
-
-    return await res.json();
-  } catch (error: any) {
-    // Log error silently for debugging but avoid crashing
-    console.warn("Using mock data due to fetch error:", error.message);
-    return mockProducts;
-  }
-}
-const mockProducts = [
-  {
-    id: "mock-1",
-    title: "Mock Wireless Mouse",
-    description: "This is a mock product",
-    price: 49.99,
-    quantity: 42,
-    images: ["/placeholder.svg?height=64&width=64"],
-    category: "Accessories",
-  },
-];
 export default async function ProductsTable() {
-  const fetchedProducts = await getProducts();
+  const fetchedProducts = await fetchProducts();
   const products = fetchedProducts.length > 0 ? fetchedProducts : mockProducts;
 
   return (

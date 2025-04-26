@@ -117,15 +117,16 @@
 //     </div>
 //   );
 // }
-
 "use client";
 
+import { createProduct, updateProduct } from "@/lib/services/products";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import Header from "./Header";
 import ProductInfoForm from "./ProductInfoForm";
 import ProductPhotoUpload from "./ProductPhotoUpload";
 import ProductPreview from "./ProductPreview";
+
 interface ProductFormProps {
   initialValues?: {
     title: string;
@@ -138,10 +139,11 @@ interface ProductFormProps {
   onSubmit?: (data: any) => Promise<void>;
   mode?: "create" | "edit";
 }
+
 export default function ProductCreationForm({
   initialValues,
   onSubmit,
-  mode,
+  mode = "create",
 }: ProductFormProps) {
   const { user } = useUser();
   const sellerId = user?.id;
@@ -153,25 +155,21 @@ export default function ProductCreationForm({
   const [price, setPrice] = useState(initialValues?.price || "");
   const [quantity, setQuantity] = useState(initialValues?.quantity || "");
   const [previewUrls, setPreviewUrls] = useState(initialValues?.images || []);
-
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleCancel = () => {
+  const resetForm = () => {
     setTitle("");
     setDescription("");
     setPrice("");
     setQuantity("");
     setPreviewUrls([]);
-
     setMessage("");
   };
 
   const handleSubmit = async () => {
     setLoading(true);
     setMessage("");
-
-    const isEditMode = mode === "edit" && initialValues?.id;
 
     const productData = {
       title,
@@ -183,24 +181,17 @@ export default function ProductCreationForm({
     };
 
     try {
-      const response = await fetch(
-        isEditMode
-          ? `http://localhost:3001/products/${initialValues.id}`
-          : "http://localhost:3001/products",
-        {
-          method: isEditMode ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(productData),
-        }
-      );
+      let result;
+      if (mode === "edit" && initialValues?.id) {
+        result = await updateProduct(initialValues.id, productData);
+        setMessage("✅ Product updated!");
+      } else {
+        result = await createProduct(productData);
+        setMessage("✅ Product created!");
+      }
 
-      if (!response.ok) throw new Error("Failed to submit product");
-
-      const result = await response.json();
-      setMessage(isEditMode ? "Product updated!" : "Product created!");
       console.log("✅ Success:", result);
-
-      handleCancel();
+      resetForm();
     } catch (error: any) {
       console.error("❌ Error:", error);
       setMessage(`❌ ${error.message}`);
@@ -219,7 +210,7 @@ export default function ProductCreationForm({
           description={description}
           price={price}
           quantity={quantity}
-          mode={mode} // <- pass mode
+          mode={mode}
           onCreate={
             onSubmit
               ? () => {
@@ -234,7 +225,7 @@ export default function ProductCreationForm({
                 }
               : handleSubmit
           }
-          onCancel={handleCancel}
+          onCancel={resetForm}
         />
 
         <div className="md:col-span-2 space-y-20">
