@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Cart from "./components/cart";
-import Header from "./components/header";
-import ProductGrid from "./components/product-grid";
+import Cart from "../components/cart";
+import Header from "../components/header";
+import ProductGrid from "../components/product-grid";
 
 export interface Product {
   id: string;

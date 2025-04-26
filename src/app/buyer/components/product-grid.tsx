@@ -49,7 +49,7 @@ export default function ProductGrid({ products, addToCart }: ProductGridProps) {
             />
             <button
               onClick={() => toggleFavorite(product.id)}
-              className="absolute top-2 right-2 p-2 rounded-full bg-white/10 backdrop-blur-sm"
+              className="absolute top-2 right-2 p-2 rounded-full bg-white/10 backdrop-blur-sm z-10"
             >
               <Heart
                 className={`w-5 h-5 ${
@@ -59,12 +59,19 @@ export default function ProductGrid({ products, addToCart }: ProductGridProps) {
                 }`}
               />
             </button>
+            <a
+              href={`/buyer/products/details/${product.id}`}
+              className="absolute inset-0 z-0"
+              aria-label={`View details for ${product.title}`}
+            />
           </div>
 
           <div className="p-4 flex-grow flex flex-col">
-            <h3 className="font-medium text-lg mb-1 line-clamp-1">
-              {product.title}
-            </h3>
+            <a href={`/buyer/products/details/${product.id}`} className="group">
+              <h3 className="font-medium text-lg mb-1 line-clamp-1 group-hover:text-blue-400">
+                {product.title}
+              </h3>
+            </a>
 
             <div className="flex items-center mb-2">
               <div className="flex">
@@ -113,7 +120,11 @@ export default function ProductGrid({ products, addToCart }: ProductGridProps) {
                 </Button>
                 <Button
                   className="flex-1 bg-gray-700 hover:bg-gray-600 text-white"
-                  onClick={() => addToCart(product)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    addToCart(product);
+                  }}
                 >
                   Add To Cart
                 </Button>
