@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Disable Webpack caching
+  webpack(config, { isServer }) {
+    config.cache = false;
+    return config;
+  },
+
   images: {
     remotePatterns: [
       {

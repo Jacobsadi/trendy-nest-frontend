@@ -5,8 +5,8 @@ import { useCartStore } from "@/lib/services/cartStore"; // ✅ Zustand store
 import { fetchProducts } from "@/lib/services/products";
 import { Product } from "@/lib/types";
 import { useEffect, useState } from "react";
-import Cart from "../components/cart";
-import ProductGrid from "../components/product-grid";
+import Cart from "./components/cart";
+import ProductGrid from "./components/product-grid";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);

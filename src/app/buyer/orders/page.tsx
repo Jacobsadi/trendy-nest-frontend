@@ -98,13 +98,14 @@ export default function Home() {
         )}
       </div>
 
-      <Cart
+      {/* <Cart
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cartItems={cartItems}
         removeFromCart={removeFromCart}
         updateQuantity={updateQuantity}
-      />
+      /> */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </main>
   );
 }

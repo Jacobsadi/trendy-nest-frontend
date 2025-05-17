@@ -1,4 +1,5 @@
 // import { Header } from "@/components/Header";
+import AuthSync from "@/components/AuthSync";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -20,7 +21,10 @@ export default function RootLayout({
       <head />
       <body className={inter.className}>
         <Providers>
-          <main>{children}</main>
+          <main>
+            <AuthSync />
+            {children}
+          </main>
         </Providers>
       </body>
     </html>

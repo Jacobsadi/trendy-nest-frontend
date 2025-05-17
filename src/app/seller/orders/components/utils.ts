@@ -32,7 +32,7 @@ export async function fetchOrders(): Promise<OrderRow[]> {
                 day: "numeric",
                 year: "numeric",
               }),
-              customer: formattedAddress, // ⬅ replaces buyerId
+              customer: formattedAddress,
               priority: "Normal",
               total: `$${Number(order.total).toFixed(2)}`,
               paymentStatus: (order.status === "PENDING"

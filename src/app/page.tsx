@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   SignedIn,
   SignedOut,
@@ -13,9 +14,11 @@ export default function Home() {
         <SignInButton />
         <SignUpButton />
       </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
+      <Button>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </Button>
     </div>
   );
 }
