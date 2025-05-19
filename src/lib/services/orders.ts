@@ -1,89 +1,20 @@
-// import { OrderRow, RawOrder } from "@/lib/types";
-// import { MOCK_ORDERS } from "../mockData";
-// export async function fetchOrders(): Promise<OrderRow[]> {
-//   try {
-//     const res = await fetch("http://localhost:3002/orders");
-//     if (!res.ok) throw new Error("Bad response");
-
-//     const data: RawOrder[] = await res.json();
-//     if (Array.isArray(data) && data.length) {
-//       const enrichedOrders = await Promise.all(
-//         data.map(async (order) => {
-//           try {
-//             const buyerRes = await fetch(
-//               `http://localhost:3004/users/${order.buyerId}`
-//             );
-//             const buyerData = await buyerRes.json();
-
-//             console.log("BUYER DATA ===================> ", buyerData);
-
-//             const address = buyerData?.addresses?.home;
-//             const formattedAddress = address
-//               ? `${address.street}, ${address.city}, ${address.country}`
-//               : "Unknown Address";
-
-//             return {
-//               id: buyerData.email,
-//               createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//               }),
-//               customer: formattedAddress, // ⬅ replaces buyerId
-//               priority: "Normal",
-//               total: `$${Number(order.total).toFixed(2)}`,
-//               paymentStatus: (order.status === "PENDING"
-//                 ? "Unpaid"
-//                 : "Paid") as "Paid" | "Unpaid",
-
-//               items: order.items?.length ?? 0,
-//               deliveryNumber: "-",
-//               orderStatus: order.status,
-//             };
-//           } catch {
-//             // fallback if buyer fetch fails
-//             return {
-//               id: order.id,
-//               createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//               }),
-//               customer: "Unknown Address",
-//               priority: "Normal",
-//               total: `$${Number(order.total).toFixed(2)}`,
-//               paymentStatus: (order.status === "PENDING"
-//                 ? "Unpaid"
-//                 : "Paid") as "Paid" | "Unpaid",
-
-//               items: order.items?.length ?? 0,
-//               deliveryNumber: "-",
-//               orderStatus: order.status,
-//             };
-//           }
-//         })
-//       );
-
-//       return enrichedOrders;
-//     }
-//   } catch (err) {
-//     console.error("Failed to fetch orders or buyers:", err);
-//   }
-
-//   return MOCK_ORDERS;
-// }
-
-// export function buildStats(rows: OrderRow[]) {
-//   return rows.reduce<Record<string, number>>((acc, r) => {
-//     acc[r.orderStatus] = (acc[r.orderStatus] || 0) + 1;
-//     return acc;
-//   }, {});
-// }
-import { OrderRow, RawOrder } from "@/lib/types";
+import { RawOrder } from "@/lib/types";
 import { MOCK_ORDERS } from "../mockData";
+import { getUserById } from "./users";
 
-// 🔁 Shared formatter logic
-function mapOrderToRow(
+export interface OrderRow {
+  id: string;
+  createdAt: string;
+  customer: string;
+  priority: string;
+  total: string;
+  paymentStatus: "Paid" | "Unpaid";
+  items: number;
+  deliveryNumber: string;
+  orderStatus: string;
+}
+
+function mapRawOrderToOrderRow(
   order: RawOrder,
   buyerEmail = "Unknown",
   address = "Unknown Address"
@@ -92,7 +23,7 @@ function mapOrderToRow(
     order.status === "PENDING" ? "Unpaid" : "Paid";
 
   return {
-    id: buyerEmail || order.id,
+    id: buyerEmail || order.id || "N/A", // Added fallback for potential undefined id
     createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -108,28 +39,27 @@ function mapOrderToRow(
   };
 }
 
-// 🔁 All Orders (Admin or Seller View)
 export async function fetchOrders(): Promise<OrderRow[]> {
   try {
     const res = await fetch("http://localhost:3002/orders");
     if (!res.ok) throw new Error("Bad response");
 
     const data: RawOrder[] = await res.json();
+
     if (Array.isArray(data) && data.length) {
       const enrichedOrders: OrderRow[] = await Promise.all(
         data.map(async (order) => {
           try {
-            const buyerRes = await fetch(
-              `http://localhost:3004/users/${order.buyerId}`
-            );
-            const buyerData = await buyerRes.json();
+            const buyerData = await getUserById(order.buyerId);
+
             const address = buyerData?.addresses?.home
               ? `${buyerData.addresses.home.street}, ${buyerData.addresses.home.city}, ${buyerData.addresses.home.country}`
               : "Unknown Address";
 
-            return mapOrderToRow(order, buyerData.email, address);
-          } catch {
-            return mapOrderToRow(order);
+            return mapRawOrderToOrderRow(order, buyerData.email, address);
+          } catch (error) {
+            console.warn(`Failed to fetch user ${order.buyerId}:`, error);
+            return mapRawOrderToOrderRow(order);
           }
         })
       );
@@ -137,64 +67,48 @@ export async function fetchOrders(): Promise<OrderRow[]> {
       return enrichedOrders;
     }
   } catch (err) {
-    console.error("Failed to fetch orders or buyers:", err);
+    console.error("Failed to fetch orders:", err);
   }
 
-  return MOCK_ORDERS;
+  return MOCK_ORDERS.map((mockOrder) =>
+    mapRawOrderToOrderRow(mockOrder as RawOrder)
+  );
 }
-
 export async function fetchOrdersByBuyer(buyerId: string) {
   try {
-    // const res = await fetch(`http://localhost:3002/orders/buyer/${buyerId}`);
-    const res = await fetch("http://localhost:3002/orders/buyer/buyer-123");
+    const res = await fetch(`http://localhost:3002/orders/buyer/${buyerId}`);
     if (!res.ok) throw new Error("Bad response");
 
-    const data = await res.json();
-    return data; // plain JSON
+    const data: RawOrder[] = await res.json();
+    return data;
   } catch (err) {
     console.error("Failed to fetch buyer's orders:", err);
-    return MOCK_ORDERS;
+    return MOCK_ORDERS.map((mockOrder) => mockOrder as RawOrder);
   }
 }
+export async function updateOrder(orderId: string, data: Record<string, any>) {
+  try {
+    const response = await fetch(`http://localhost:3002/orders/${orderId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-// 📊 Stats by status
+    if (!response.ok) {
+      throw new Error(`Failed to update order ${orderId}`);
+    }
+
+    return await response.json(); // Optionally return updated order
+  } catch (error) {
+    console.error("Error updating order:", error);
+    throw error;
+  }
+}
 export function buildStats(rows: OrderRow[]) {
   return rows.reduce<Record<string, number>>((acc, r) => {
     acc[r.orderStatus] = (acc[r.orderStatus] || 0) + 1;
     return acc;
   }, {});
 }
-
-// 🔁 Orders by Buyer (for /buyer/history)
-// export async function fetchOrdersByBuyer(buyerId: string): Promise<OrderRow[]> {
-//   try {
-//     const res = await fetch(`http://localhost:3002/orders/buyer/${buyerId}`);
-//     if (!res.ok) throw new Error("Bad response");
-
-//     const data: RawOrder[] = await res.json();
-
-//     const enrichedOrders: OrderRow[] = await Promise.all(
-//       data.map(async (order) => {
-//         try {
-//           const buyerRes = await fetch(
-//             `http://localhost:3004/users/${order.buyerId}`
-//           );
-//           const buyerData = await buyerRes.json();
-
-//           const address = buyerData?.addresses?.home
-//             ? `${buyerData.addresses.home.street}, ${buyerData.addresses.home.city}, ${buyerData.addresses.home.country}`
-//             : "Unknown Address";
-
-//           return mapOrderToRow(order, buyerData.email, address);
-//         } catch {
-//           return mapOrderToRow(order);
-//         }
-//       })
-//     );
-
-//     return enrichedOrders;
-//   } catch (err) {
-//     console.error("Failed to fetch buyer's orders:", err);
-//     return MOCK_ORDERS;
-//   }
-// }

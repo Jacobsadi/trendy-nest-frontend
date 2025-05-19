@@ -4,7 +4,7 @@ import { useCartStore } from "@/lib/services/cartStore"; // ✅ Zustand cart
 import { useUser } from "@clerk/nextjs";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CheckoutForm from "../components/CheckoutForm";
 
 const stripePromise = loadStripe(
@@ -12,6 +12,7 @@ const stripePromise = loadStripe(
 );
 
 export default function CheckoutPage() {
+  const hasCreatedOrder = useRef(false);
   const [clientSecret, setClientSecret] = useState("");
   const [orderId, setOrderId] = useState("");
 
@@ -22,33 +23,33 @@ export default function CheckoutPage() {
     price: item.price,
   }));
   const total = Math.round(
-    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0) * 100
+    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   ); // convert to cents
   const { user } = useUser();
   const buyerId = user?.id;
   console.log("the ID===========>", buyerId);
   useEffect(() => {
     const makeOrder = async () => {
-      if (cartItems.length === 0) return;
+      if (hasCreatedOrder.current || cartItems.length === 0) return;
+      hasCreatedOrder.current = true; // ✅ prevent re-run
 
       const response = await fetch("http://localhost:3002/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          buyerId: "buyer-123", // Replace with actual user ID from auth
+          buyerId: user?.id,
           total,
           items,
         }),
       });
 
       const data = await response.json();
-      console.log("payment ==============>", data);
       setClientSecret(data.paymentResult.client_secret);
       setOrderId(data.order.id);
     };
 
     makeOrder();
-  }, [cartItems]); // dependency to rerun if cart changes
+  }, []); // ✅ only run once on mount
 
   const options = {
     clientSecret,

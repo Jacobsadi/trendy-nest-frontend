@@ -2,7 +2,7 @@
 
 import { useCartStore } from "@/lib/services/cartStore";
 import { fetchOrdersByBuyer } from "@/lib/services/orders";
-import { OrderRow } from "@/lib/types";
+import { RawOrder } from "@/lib/types"; // Import RawOrder
 import { useUser } from "@clerk/nextjs";
 import { Suspense, useEffect, useState } from "react";
 import Header from "../components/header";
@@ -15,33 +15,36 @@ export default function BuyerOrderHistoryPage() {
   const toggleCart = () => setIsCartOpen(!isCartOpen);
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const { user } = useUser();
-  const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [rawOrders, setRawOrders] = useState<RawOrder[]>([]); // Store RawOrder
   const [loading, setLoading] = useState(true);
-  console.log("ORDERS DATA ============================> ", orders);
+  console.log("ORDERS DATA ============================> ", rawOrders);
+
   useEffect(() => {
     if (user?.id) {
-      fetchOrdersByBuyer(user.id).then((data) => {
-        setOrders(data);
-        setLoading(false);
-      });
+      setLoading(true);
+      fetchOrdersByBuyer(user.id)
+        .then((data) => {
+          setRawOrders(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching buyer orders:", error);
+          setLoading(false);
+          // Handle error appropriately, e.g., setError state
+        });
     }
   }, [user?.id]);
 
   return (
-    // <div className="min-h-screen bg-gray-900 text-white p-8 pt-24">
-    //   <h1 className="text-2xl font-bold mb-8">Your Order History</h1>
-    //   {loading ? <p>Loading...</p> : <OrderHistoryTable orders={orders} />}
-
     <div className="min-h-screen bg-gray-900 text-white">
       <Header toggleCart={toggleCart} cartItemsCount={cartItemCount} />
       <main className="pt-24 px-8 pb-8">
         <h1 className="text-2xl font-bold mb-8">Your Order History</h1>
         <Suspense fallback={<OrderTableSkeleton />}>
-          <OrderHistoryTable orders={orders} />
+          <OrderHistoryTable orders={rawOrders} />{" "}
+          {/* Pass RawOrder[] to the table */}
         </Suspense>
       </main>
     </div>
-
-    // </div>
   );
 }

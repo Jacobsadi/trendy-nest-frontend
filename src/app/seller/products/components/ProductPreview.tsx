@@ -57,15 +57,11 @@ export default function ProductPreview({
                   <button
                     onClick={handlePrevImage}
                     className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-lg px-2 py-1 rounded hover:bg-black"
-                  >
-                    ‹
-                  </button>
+                  ></button>
                   <button
                     onClick={handleNextImage}
                     className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-lg px-2 py-1 rounded hover:bg-black"
-                  >
-                    ›
-                  </button>
+                  ></button>
                 </>
               )}
             </>

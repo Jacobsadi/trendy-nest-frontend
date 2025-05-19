@@ -8,22 +8,29 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import { Bell, Clock, Moon, Search, Settings } from "lucide-react";
+import { Home, Package, Search, User } from "lucide-react";
+import Link from "next/link";
 
 export default function Header() {
   return (
     <header className="top-0 left-0 w-full flex justify-between fixed items-center p-4 border-b bg-gray-800 border-gray-700 z-50">
       <h1 className="text-lg font-semibold">CREATE PRODUCT</h1>
       <div className="flex items-center gap-4">
-        <Moon className="w-5 h-5 text-gray-400" />
-        <div className="relative">
-          <Bell className="w-5 h-5 text-gray-400" />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-            3
-          </span>
-        </div>
-        <Settings className="w-5 h-5 text-gray-400" />
-        <Clock className="w-5 h-5 text-gray-400" />
+        <Link href="/seller/profile">
+          <button className="p-1 rounded hover:bg-gray-700 transition">
+            <User className="w-5 h-5 text-gray-400" />
+          </button>
+        </Link>
+        <Link href="/seller/products">
+          <button className="p-1 rounded hover:bg-gray-700 transition">
+            <Home className="w-5 h-5 text-gray-400" />
+          </button>
+        </Link>
+        <Link href="/seller/orders">
+          <button className="p-1 rounded hover:bg-gray-700 transition">
+            <Package className="w-5 h-5 text-gray-400" />
+          </button>
+        </Link>
         {/* Auth UI */}
         <div className="flex items-center gap-3">
           <SignedOut>

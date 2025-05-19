@@ -1,3 +1,6 @@
+import { mockProducts } from "@/lib/mockData";
+import { fetchProducts } from "@/lib/services/products";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -7,11 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockProducts } from "@/lib/mockData";
-import { fetchProducts } from "@/lib/services/products";
-import { Eye, Pencil, Trash2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import ProductRowClient from "./product-row-client";
 
 export default async function ProductsTable() {
   const fetchedProducts = await fetchProducts();
@@ -52,153 +52,76 @@ export default async function ProductsTable() {
               <th className="p-4 text-left text-gray-400">Price</th>
               <th className="p-4 text-left text-gray-400">Stock</th>
               <th className="p-4 text-left text-gray-400">Category</th>
-              {/* <th className="p-4 text-left text-gray-400">Rating</th> */}
               <th className="p-4 text-left text-gray-400">Action</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product: any) => (
-              <tr
-                key={product.id}
-                className="border-b border-gray-700 hover:bg-gray-750"
-              >
-                <td className="p-4">
-                  <Checkbox />
-                </td>
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 bg-gray-700 rounded-md overflow-hidden flex items-center justify-center">
-                      <Image
-                        src={
-                          product.images[0] ||
-                          "/placeholder.svg?height=64&width=64"
-                        }
-                        alt={product.title}
-                        width={64}
-                        height={64}
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="font-medium">{product.title}</p>
-                      {/* <p className="text-sm text-gray-400">
-                        Description: {product.description}
-                      </p> */}
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">${product.price.toFixed(2)}</td>
-                <td className="p-4">
-                  <div>
-                    <p>{product.quantity} Item Left</p>
-                    <p className="text-gray-400">0 Sold</p>
-                  </div>
-                </td>
-                <td className="p-4">Electronics</td>
-                {/* <td className="p-4">
-                  <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span>4.5</span>
-                    <span className="text-gray-400">0 Review</span>
-                  </div>
-                </td> */}
-                <td className="p-4">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-gray-400 hover:text-white"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Link href={`/seller/products/${product.id}/edit`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-orange-400 hover:text-orange-300"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
+              <ProductRowClient key={product.id} product={product} />
             ))}
-
-            {/* Sample data rows to match the screenshot */}
-
-            <tr className="border-b border-gray-700 hover:bg-gray-750">
-              <td className="p-4">
-                <Checkbox />
-              </td>
-              <td className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 bg-gray-700 rounded-md overflow-hidden flex items-center justify-center">
-                    <Image
-                      src="/placeholder.svg?height=64&width=64"
-                      alt="Olive Green Leather Bag"
-                      width={64}
-                      height={64}
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p className="font-medium">Olive Green Leather Bag</p>
-                    <p className="text-sm text-gray-400">Size: S, M</p>
-                  </div>
-                </div>
-              </td>
-              <td className="p-4">$136.00</td>
-              <td className="p-4">
-                <div>
-                  <p>784 Item Left</p>
-                  <p className="text-gray-400">674 Sold</p>
-                </div>
-              </td>
-              <td className="p-4">Hand Bag</td>
-              {/* <td className="p-4">
-                <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span>4.1</span>
-                  <span className="text-gray-400">143 Review</span>
-                </div>
-              </td> */}
-              <td className="p-4">
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-gray-400 hover:text-white"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-orange-400 hover:text-orange-300"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-400 hover:text-red-300"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
     </div>
   );
 }
+
+{
+  /* Sample data rows to match the screenshot */
+}
+
+// <tr className="border-b border-gray-700 hover:bg-gray-750">
+//   <td className="p-4">
+//     <Checkbox />
+//   </td>
+//   <td className="p-4">
+//     <div className="flex items-center gap-3">
+//       <div className="w-16 h-16 bg-gray-700 rounded-md overflow-hidden flex items-center justify-center">
+//         <Image
+//           src="/placeholder.svg?height=64&width=64"
+//           alt="Olive Green Leather Bag"
+//           width={64}
+//           height={64}
+//           className="object-cover"
+//         />
+//       </div>
+//       <div>
+//         <p className="font-medium">Olive Green Leather Bag</p>
+//         <p className="text-sm text-gray-400">Size: S, M</p>
+//       </div>
+//     </div>
+//   </td>
+//   <td className="p-4">$136.00</td>
+//   <td className="p-4">
+//     <div>
+//       <p>784 Item Left</p>
+//       <p className="text-gray-400">674 Sold</p>
+//     </div>
+//   </td>
+//   <td className="p-4">Hand Bag</td>
+//   <td className="p-4">
+//     <div className="flex gap-2">
+//       <Button
+//         variant="ghost"
+//         size="icon"
+//         className="h-8 w-8 text-gray-400 hover:text-white"
+//       >
+//         <Eye className="h-4 w-4" />
+//       </Button>
+//       <Button
+//         variant="ghost"
+//         size="icon"
+//         className="h-8 w-8 text-orange-400 hover:text-orange-300"
+//       >
+//         <Pencil className="h-4 w-4" />
+//       </Button>
+//       <Button
+//         variant="ghost"
+//         size="icon"
+//         className="h-8 w-8 text-red-400 hover:text-red-300"
+//       >
+//         <Trash2 className="h-4 w-4" />
+//       </Button>
+//     </div>
+//   </td>
+// </tr>

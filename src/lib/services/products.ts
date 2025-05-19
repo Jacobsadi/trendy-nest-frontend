@@ -66,3 +66,15 @@ export async function updateProduct(
 
   return await response.json();
 }
+
+export async function deleteProduct(productId: string) {
+  const res = await fetch(`http://localhost:3001/products/${productId}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete product");
+  }
+
+  return await res.json();
+}

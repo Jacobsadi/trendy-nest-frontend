@@ -1,38 +1,14 @@
-// import { Button } from "@/components/ui/button";
-// import {
-//   SignedIn,
-//   SignedOut,
-//   SignInButton,
-//   SignUpButton,
-//   UserButton,
-// } from "@clerk/nextjs";
-
-// export default function Home() {
-//   return (
-//     <div>
-//       <SignedOut>
-//         <SignInButton />
-//         <SignUpButton />
-//       </SignedOut>
-//       <Button>
-//         <SignedIn>
-//           <UserButton />
-//         </SignedIn>
-//       </Button>
-//     </div>
-//   );
-// }
 "use client";
 
 import { useEffect, useState } from "react";
 
+import Cart from "@/app/buyer/components/cart";
+import Header from "@/app/buyer/components/header";
+import ProductGrid from "@/app/buyer/components/product-grid";
 import Hero from "@/components/hero";
-import { mockProducts } from "@/lib/mockData";
 import { useCartStore } from "@/lib/services/cartStore";
+import { fetchProducts } from "@/lib/services/products";
 import { Product } from "@/lib/types";
-import Cart from "./buyer/components/cart";
-import Header from "./buyer/components/header";
-import ProductGrid from "./buyer/components/product-grid";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -44,26 +20,18 @@ export default function Home() {
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const addToCart = useCartStore((state) => state.addToCart);
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3001/products");
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await response.json();
-        // If data is an array, use it directly, otherwise wrap the single item in an array
-        setProducts(Array.isArray(data) ? data : [data]);
+        const data = await fetchProducts(); // ✅ use the utility
+        setProducts(data);
       } catch (error) {
-        console.error("Error fetching products:", error);
         setError(true);
-        // Use mock data if fetch fails
-        setProducts(mockProducts);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    loadProducts();
   }, []);
 
   return (
