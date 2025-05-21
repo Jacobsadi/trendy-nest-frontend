@@ -5,11 +5,12 @@ import { mockProducts } from "@/lib/mockData";
 import { useCartStore } from "@/lib/services/cartStore";
 import type { Product } from "@/lib/types";
 import { useEffect, useState } from "react";
-import Cart from "./buyer/components/cart";
-import Header from "./buyer/components/header";
-import ProductGrid from "./buyer/components/product-grid";
-import Testimonials from "./buyer/components/testimonials";
-import WhyShopWithUs from "./buyer/components/why-shop-with-us";
+import Cart from "../components/cart";
+import Header from "../components/header";
+import ProductCategories from "../components/product-categories";
+import ProductGrid from "../components/product-grid";
+import Testimonials from "../components/testimonials";
+import WhyShopWithUs from "../components/why-shop-with-us";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -52,7 +53,7 @@ export default function Home() {
       <div className="pt-16">
         <Hero />
 
-        {/* <ProductCategories /> */}
+        <ProductCategories />
 
         <div className="pt-4 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-6 mt-4">Featured Products</h1>

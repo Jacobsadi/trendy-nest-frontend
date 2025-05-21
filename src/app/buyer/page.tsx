@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/app/buyer/components/header";
+import { ChatBot } from "@/components/ChatBot";
 import { useCartStore } from "@/lib/services/cartStore"; // ✅ Zustand store
 import { fetchProducts } from "@/lib/services/products";
 import { Product } from "@/lib/types";
@@ -69,9 +70,12 @@ export default function Home() {
           </div>
         )}
       </div>
-
-      {/* ✅ Zustand-powered Cart (no props needed) */}
       <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <ChatBot
+        position="bottom-right"
+        initialMessage="👋 Welcome to your profile page! Need help managing your account?"
+        pageContext="user profile"
+      />
     </main>
   );
 }

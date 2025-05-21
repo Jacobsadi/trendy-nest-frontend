@@ -33,5 +33,6 @@ export async function findTopProductId(
   });
 
   const match = queryResult.matches?.[0];
+  console.log("The found match from pine cone  ===================>", match);
   return match?.id ?? null;
 }

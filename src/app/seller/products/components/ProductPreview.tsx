@@ -9,11 +9,10 @@ interface Props {
   price: string;
   quantity: string;
   mode?: "create" | "edit";
-  onCreate: (data: any) => void;
+  onCreate: (data: any) => Promise<void> | void;
   onCancel: () => void;
+  isFormValid: boolean;
 }
-
-// const previewColors = ["lightblue", "orange", "white", "red"];
 
 export default function ProductPreview({
   imageUrls,
@@ -24,8 +23,10 @@ export default function ProductPreview({
   onCreate,
   onCancel,
   mode,
+  isFormValid,
 }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) =>
@@ -37,6 +38,15 @@ export default function ProductPreview({
     setCurrentImageIndex((prev) =>
       prev === imageUrls.length - 1 ? 0 : prev + 1
     );
+  };
+
+  const handleCreate = async () => {
+    try {
+      setIsLoading(true);
+      await onCreate({ title, description, price, quantity, imageUrls });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -85,7 +95,6 @@ export default function ProductPreview({
         <div>
           <div className="flex items-center gap-2">
             <p className="text-gray-400 text-sm mb-1">Quantity :</p>
-
             <span className="text-white font-medium">
               {quantity ? `${parseFloat(quantity)}` : "0"}
             </span>
@@ -102,7 +111,43 @@ export default function ProductPreview({
           </div>
         </div>
 
-        {/* <div>
+        <div className="flex gap-3 mt-6">
+          <Button
+            className="flex-1 bg-gray-700 hover:bg-gray-600 text-white"
+            onClick={handleCreate}
+            disabled={isLoading || !isFormValid}
+          >
+            {isLoading
+              ? "Processing..."
+              : mode === "edit"
+              ? "Update Product"
+              : "Create Product"}
+          </Button>
+          <Button
+            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+{
+  /* 
+  
+  
+          <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+          >
+             {loading ? "Creating..." : "Create Product"}
+            </button>
+  <div>
           <p className="text-gray-400 text-sm mb-2">Size :</p>
           <div className="flex gap-2">
             {["S", "M", "XL", "XXL"].map((size) => (
@@ -119,9 +164,11 @@ export default function ProductPreview({
               </button>
             ))}
           </div>
-        </div> */}
+        </div> */
+}
 
-        {/* <div>
+{
+  /* <div>
           <p className="text-gray-400 text-sm mb-2">Colors :</p>
           <div className="flex gap-2">
             {previewColors.map((color) => (
@@ -137,23 +184,5 @@ export default function ProductPreview({
               />
             ))}
           </div>
-        </div> */}
-
-        <div className="flex gap-3 mt-6">
-          <Button
-            className="flex-1 bg-gray-700 hover:bg-gray-600 text-white"
-            onClick={onCreate}
-          >
-            {mode === "edit" ? "Update Product" : "Create Product"}
-          </Button>
-          <Button
-            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
-            onClick={onCancel}
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+        </div> */
 }

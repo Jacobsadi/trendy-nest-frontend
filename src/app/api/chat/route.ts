@@ -1,10 +1,6 @@
-import {
-  embeddingStore,
-  extractStandaloneQuestion,
-  generateEmbeddingWithRetry,
-} from "@/lib/services/openai";
 import { findTopProductId } from "@/lib/services/pinecone";
 import { fetchProductById } from "@/lib/services/products";
+import { embed } from "@/lib/types";
 import { openai } from "@ai-sdk/openai";
 import { streamText, type Message } from "ai";
 
@@ -23,29 +19,53 @@ export async function POST(req: Request) {
     }
 
     // 1) Collapse chat → question
-    const question = await extractStandaloneQuestion(messages.slice(-2));
+    // const question = await extractStandaloneQuestion(messages.slice(-2));
 
-    const vector = await generateEmbeddingWithRetry(question);
-    embeddingStore.push({ question, vector }); // <-- store it
-    console.log("Stored vectors:", embeddingStore); // just for checking
+    // const vector = await generateEmbeddingWithRetry(question);
+    // await pc.upsert([
+    //   {
+    //     id: crypto.randomUUID(), // or a consistent ID depending on your use case
+    //     values: vector, // this is your embedding vector
+    //     metadata: {
+    //       question,
+    //       // optional
+    //     },
+    //   },
+    // ]);
+
     // 2) Find best product ID
-    const productId = await findTopProductId(vector);
-    console.log("Product ID ====================================>", productId);
+    const productId = await findTopProductId(embed);
+    console.log(
+      "Product from PineCone ====================================>",
+      productId
+    );
     // 3) Fetch full product details (or mock)
     const product = productId ? await fetchProductById(productId) : null;
-    console.log("Product DATA ====================================>", product);
+    // console.log("Product DATA ====================================>", product);
 
     const productInfo = product
-      ? `The following product may match the user's needs. Title: "${product.title}". Description: "${product.description}". Based on the question, explain how this product is useful and relevant. At the end, include this line exactly: "Here is a product you can read more about: ${product.id}"`
+      ? `The following product may match the user's needs. Title: "${product.title}". Description: "${product.description}".`
       : "There is no product available.";
+
     const systemMessage = `
-            You are a helpful assistant on an e-commerce platform.
-            Your job is to help users understand if a product fits their needs, using the product description and their question.
-            Be concise, clear, and friendly. Focus on usefulness and product benefits.
-            ${productInfo}
-            ${pageContext ? `Page context: ${pageContext}` : ""}
-            
-            `;
+You are a helpful assistant on an e-commerce platform.
+
+Your job is to help users understand if a product fits their needs, using the product description and their question.
+
+Be concise, clear, and friendly. Focus on usefulness and product benefits.
+
+${productInfo}
+
+If the product is clearly relevant and useful based on the user's question, explain how it is a good match. At the end of that explanation, include this exact line: "Here is a product you can read more about: ${
+      product?.id
+    }".
+
+However, if the product is not relevant to the question or no suitable product is available, do **not** include "Here is a product you can read more about: ${
+      product?.id
+    }". Instead, politely apologize and say that the product is not available in the store.
+
+${pageContext ? `Page context: ${pageContext}` : ""}
+`;
 
     const result = await streamText({
       model: openai("gpt-3.5-turbo"),

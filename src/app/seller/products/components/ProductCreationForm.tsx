@@ -148,6 +148,7 @@ export default function ProductCreationForm({
 }: ProductFormProps) {
   const { user } = useUser();
   const sellerId = user?.id;
+  const [formValid, setFormValid] = useState(false);
 
   const [title, setTitle] = useState(initialValues?.title || "");
   const [description, setDescription] = useState(
@@ -227,6 +228,7 @@ export default function ProductCreationForm({
               : handleSubmit
           }
           onCancel={resetForm}
+          isFormValid={formValid}
         />
 
         <div className="md:col-span-2 space-y-20">
@@ -243,6 +245,7 @@ export default function ProductCreationForm({
             setPrice={setPrice}
             quantity={quantity}
             setQuantity={setQuantity}
+            setFormValid={setFormValid}
           />
         </div>
       </div>
