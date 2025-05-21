@@ -1,8 +1,8 @@
 // stores/cartStore.ts
+import type { Message } from "ai";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Product } from "../types";
-
 interface CartItem extends Product {
   quantity: number;
 }
@@ -49,6 +49,27 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "cart-storage", // ✅ this is the key in localStorage
+    }
+  )
+);
+
+interface ChatState {
+  messages: Message[];
+  setMessages: (msgs: Message[]) => void;
+  addMessage: (msg: Message) => void;
+  clearMessages: () => void;
+}
+
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set, get) => ({
+      messages: [],
+      setMessages: (msgs) => set({ messages: msgs }),
+      addMessage: (msg) => set({ messages: [...get().messages, msg] }),
+      clearMessages: () => set({ messages: [] }),
+    }),
+    {
+      name: "chat-storage",
     }
   )
 );

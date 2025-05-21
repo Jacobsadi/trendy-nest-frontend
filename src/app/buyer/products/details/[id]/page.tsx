@@ -534,6 +534,7 @@ export interface Product {
   images: string[];
   createdAt: string;
   updatedAt: string;
+  category: string;
 }
 interface Props {
   params: Promise<{ id: string }>;
@@ -592,13 +593,6 @@ export default function ProductDetails({ params }: { params: { id: string } }) {
       loadProductDetails();
     }
   }, [id]);
-  // const updateQuantity = (productId: string, quantity: number) => {
-  //   updateItemQuantity(productId, quantity);
-  // };
-
-  // const removeFromCart = (productId: string) => {
-  //   removeItem(productId);
-  // };
 
   const incrementQuantity = () => {
     if (product && quantity < product.quantity) {
@@ -618,17 +612,10 @@ export default function ProductDetails({ params }: { params: { id: string } }) {
     }
   };
 
-  // const addToCart = () => {
-  //   if (!product) return;
-  //   addItem(product, quantity);
-  //   console.log("Added to cart:", { ...product, quantity });
-  // };
-
   const buyNow = () => {
     if (!product) return; // ✅ Ensure product exists
     addToCart(product, quantity); // ✅ Correct usage
     console.log("Buy now:", { ...product, quantity });
-    // Redirect to checkout page (add logic if needed)
   };
 
   const toggleCart = () => {
@@ -993,15 +980,6 @@ export default function ProductDetails({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
-
-      {/* Cart Sidebar */}
-      {/* <Cart
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
-      /> */}
       <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );

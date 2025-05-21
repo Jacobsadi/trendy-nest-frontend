@@ -14,6 +14,7 @@ export interface Product {
   images: string[];
   createdAt: string;
   updatedAt: string;
+  category: string;
 }
 
 interface ProductGridProps {

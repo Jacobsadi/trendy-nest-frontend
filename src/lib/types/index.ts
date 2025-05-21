@@ -49,6 +49,7 @@ export interface Product {
   images: string[];
   createdAt: string;
   updatedAt: string;
+  category: string;
 }
 
 export interface ProductFormData {

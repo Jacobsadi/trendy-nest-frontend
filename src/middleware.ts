@@ -87,16 +87,12 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (!userId) return NextResponse.next();
 
-  console.log(
-    "==========================================================================================>"
-  );
   console.log("USER ID ===================>", userId);
 
   let role: "ADMIN" | "SELLER" | "BUYER" | undefined;
 
   try {
     const res = await fetch(`http://localhost:3004/users/${userId}`);
-    console.log("RESPONSE STATUS ==========>", res.status);
 
     if (res.status === 404) {
       console.warn("⏳ User not in backend yet — skipping check");

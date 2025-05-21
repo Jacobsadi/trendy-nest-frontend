@@ -117,6 +117,7 @@
 //     </div>
 //   );
 // }
+
 "use client";
 
 import { createProduct, updateProduct } from "@/lib/services/products";
