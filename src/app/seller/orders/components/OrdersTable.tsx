@@ -150,6 +150,7 @@ import {
 import { updateOrder } from "@/lib/services/orders";
 import { EnrichedOrder } from "@/lib/types"; // Import EnrichedOrder
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function OrderRowDisplay({ order }: { order: EnrichedOrder }) {
@@ -185,34 +186,42 @@ function OrderRowDisplay({ order }: { order: EnrichedOrder }) {
         return "border-gray-500 text-gray-300";
     }
   };
-
+  const orderLink = `/seller/orders/${order.id}`;
   return (
-    <tr className="border-b border-gray-700 hover:bg-gray-750">
-      <td className="p-4 font-medium text-blue-400">{order.orderNumber}</td>
-      <td className="p-4">{formattedDate}</td>
-      <td className="p-4 text-orange-400">{order.buyerEmail}</td>
-      {/* Display Buyer Email */}
-      <td className="p-4">{order.buyerAddress}</td>
-      {/* Display Formatted Buyer Address */}
-      <td className="p-4">{totalAmount}</td>
-      <td className="p-4">
-        <span className="px-3 py-1 rounded-md text-sm bg-green-500/20 text-green-500 ">
-          Paid
-        </span>
+    <tr className="border-b border-gray-700 hover:bg-gray-700 ">
+      <td className="p-4 font-medium text-blue-400">
+        <Link href={orderLink} className="hover:underline">
+          {order.orderNumber}
+        </Link>
       </td>
       <td className="p-4">
-        <span className="px-6 mx-2 py-1 rounded-md text-sm bg-green-500/20 text-green-500">
-          {itemCount}
-        </span>
+        <Link href={orderLink}>{formattedDate}</Link>
+      </td>
+      <td className="p-4 text-orange-400">
+        <Link href={orderLink}>{order.buyerEmail}</Link>
       </td>
       <td className="p-4">
-        {/* <span
-          className={`px-3 py-1 rounded-md text-sm border ${getStatusClass(
-            order.status
-          )}`}
-        >
-          {order.status}
-        </span> */}
+        <Link href={orderLink}>{order.buyerAddress}</Link>
+      </td>
+      <td className="p-4">
+        <Link href={orderLink}>{totalAmount}</Link>
+      </td>
+      <td className="p-4">
+        <Link href={orderLink}>
+          <span className="px-3 py-1 rounded-md text-sm bg-green-500/20 text-green-500">
+            Paid
+          </span>
+        </Link>
+      </td>
+      <td className="p-4">
+        <Link href={orderLink}>
+          <span className="px-6 mx-2 py-1 rounded-md text-sm bg-green-500/20 text-green-500">
+            {itemCount}
+          </span>
+        </Link>
+      </td>
+      {/* status and actions remain unchanged */}
+      <td className="p-4">
         <Select defaultValue={order.status} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-[140px] bg-gray-800 border-gray-600 text-white">
             <SelectValue />
@@ -227,6 +236,7 @@ function OrderRowDisplay({ order }: { order: EnrichedOrder }) {
       </td>
       <td className="p-4">
         <div className="flex gap-2">
+          {/* Optional: make these buttons navigate too if you want */}
           <Button
             variant="ghost"
             size="icon"

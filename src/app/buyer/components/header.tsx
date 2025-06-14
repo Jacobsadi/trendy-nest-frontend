@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import {
   SignedIn,
   SignedOut,
@@ -8,9 +7,9 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import { History, Home, Search, Settings, ShoppingCart } from "lucide-react";
+import { History, Home, Settings, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-
 interface HeaderProps {
   toggleCart: () => void;
   cartItemsCount: number;
@@ -22,7 +21,18 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="top-0 left-0 w-full flex justify-between fixed items-center p-4 border-b bg-gray-800 border-gray-700 z-50">
-      <h1 className="text-lg font-semibold text-white">CREATE PRODUCT</h1>
+      <Link href="/main">
+        <div className="flex items-center gap-3 cursor-pointer">
+          <Image
+            src="/trendynest-logo.png"
+            alt="TrendyNest Logo"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+          <h1 className="text-lg font-semibold text-white">Trendy-Nest</h1>
+        </div>
+      </Link>
 
       <div className="flex items-center gap-4">
         <div className="relative cursor-pointer" onClick={toggleCart}>
@@ -39,7 +49,7 @@ export default function Header({
             <Settings className="w-5 h-5 text-gray-400" />
           </button>
         </Link>
-        <Link href="/buyer/products">
+        <Link href="/buyer">
           <button className="p-1 rounded hover:bg-gray-700 transition">
             <Home className="w-5 h-5 text-gray-400" />
           </button>
@@ -78,11 +88,11 @@ export default function Header({
         </div>
 
         <div className="relative ml-4">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          {/* <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
             className="pl-10 bg-gray-800 border-gray-700 text-sm rounded-full w-40 h-8"
             placeholder="Search..."
-          />
+          /> */}
         </div>
       </div>
     </header>

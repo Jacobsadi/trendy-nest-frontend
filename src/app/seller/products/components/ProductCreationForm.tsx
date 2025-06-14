@@ -159,6 +159,7 @@ export default function ProductCreationForm({
   const [previewUrls, setPreviewUrls] = useState(initialValues?.images || []);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [category, setCategory] = useState("Makeup");
 
   const resetForm = () => {
     setTitle("");
@@ -180,6 +181,7 @@ export default function ProductCreationForm({
       quantity: parseInt(quantity),
       sellerId,
       images: previewUrls.filter((img) => img.trim() !== ""),
+      category,
     };
 
     try {
@@ -213,6 +215,7 @@ export default function ProductCreationForm({
           price={price}
           quantity={quantity}
           mode={mode}
+          category={category}
           onCreate={
             onSubmit
               ? () => {
@@ -222,6 +225,7 @@ export default function ProductCreationForm({
                     price: parseFloat(price),
                     quantity: parseInt(quantity),
                     images: previewUrls,
+                    category,
                   };
                   onSubmit(productData);
                 }
@@ -246,6 +250,8 @@ export default function ProductCreationForm({
             quantity={quantity}
             setQuantity={setQuantity}
             setFormValid={setFormValid}
+            category={category}
+            setCategory={setCategory}
           />
         </div>
       </div>

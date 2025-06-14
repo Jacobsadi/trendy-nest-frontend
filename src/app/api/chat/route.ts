@@ -1,6 +1,9 @@
+import {
+  extractStandaloneQuestion,
+  generateEmbeddingWithRetry,
+} from "@/lib/services/openai";
 import { findTopProductId } from "@/lib/services/pinecone";
 import { fetchProductById } from "@/lib/services/products";
-import { embed } from "@/lib/types";
 import { openai } from "@ai-sdk/openai";
 import { streamText, type Message } from "ai";
 
@@ -18,10 +21,9 @@ export async function POST(req: Request) {
       return mockResponse();
     }
 
-    // 1) Collapse chat → question
-    // const question = await extractStandaloneQuestion(messages.slice(-2));
+    const question = await extractStandaloneQuestion(messages.slice(-2));
 
-    // const vector = await generateEmbeddingWithRetry(question);
+    const vector = await generateEmbeddingWithRetry(question);
     // await pc.upsert([
     //   {
     //     id: crypto.randomUUID(), // or a consistent ID depending on your use case
@@ -34,7 +36,7 @@ export async function POST(req: Request) {
     // ]);
 
     // 2) Find best product ID
-    const productId = await findTopProductId(embed);
+    const productId = await findTopProductId(vector);
     console.log(
       "Product from PineCone ====================================>",
       productId

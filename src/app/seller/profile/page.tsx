@@ -44,7 +44,8 @@ export default function ProfilePage() {
       if (!userId) return;
 
       try {
-        const backendUser = await getUserById(userId);
+        const backendUserData = await getUserById(userId);
+        const backendUser = await backendUserData.json();
 
         setFormData((prev) => ({
           ...prev,

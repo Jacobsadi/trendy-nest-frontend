@@ -12,6 +12,7 @@ interface Props {
   onCreate: (data: any) => Promise<void> | void;
   onCancel: () => void;
   isFormValid: boolean;
+  category: string;
 }
 
 export default function ProductPreview({
@@ -24,6 +25,7 @@ export default function ProductPreview({
   onCancel,
   mode,
   isFormValid,
+  category,
 }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,6 +93,9 @@ export default function ProductPreview({
           {title || "Product Name"}{" "}
           <span className="text-gray-500 text-sm">(Fashion)</span>
         </h2>
+        <p className="text-gray-500 text-sm italic">
+          Category: {category || "Uncategorized"}
+        </p>
         {description && <p className="text-sm text-gray-400">{description}</p>}
         <div>
           <div className="flex items-center gap-2">
@@ -120,8 +125,8 @@ export default function ProductPreview({
             {isLoading
               ? "Processing..."
               : mode === "edit"
-              ? "Update Product"
-              : "Create Product"}
+                ? "Update Product"
+                : "Create Product"}
           </Button>
           <Button
             className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"

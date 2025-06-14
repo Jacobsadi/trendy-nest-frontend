@@ -90,6 +90,8 @@ interface Props {
   quantity: string;
   setQuantity: (v: string) => void;
   setFormValid: (v: boolean) => void; // <- NEW prop
+  category: string;
+  setCategory: (v: string) => void;
 }
 
 export default function ProductInfoForm({
@@ -102,6 +104,8 @@ export default function ProductInfoForm({
   quantity,
   setQuantity,
   setFormValid,
+  category,
+  setCategory,
 }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -155,6 +159,22 @@ export default function ProductInfoForm({
             required
             onChange={(e) => setQuantity(e.target.value)}
           />
+        </div>
+        <div>
+          <label className="text-gray-400 text-sm block mb-2">Category</label>
+          <select
+            className="w-full bg-gray-800 text-white border border-gray-700 rounded px-4 py-2"
+            value={category}
+            required
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Select Category</option>
+            <option value="Makeup">Makeup</option>
+            <option value="Skincare">Skincare</option>
+            <option value="Haircare">Haircare</option>
+            <option value="Tools">Beauty Tools</option>
+            <option value="Fragrance">Fragrance</option>
+          </select>
         </div>
       </div>
 

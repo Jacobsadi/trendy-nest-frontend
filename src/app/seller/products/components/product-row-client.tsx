@@ -49,9 +49,9 @@ export default function ProductRowClient({ product }: { product: any }) {
       <td className="p-4">${product.price.toFixed(2)}</td>
       <td className="p-4">
         <p>{product.quantity} Item Left</p>
-        <p className="text-gray-400">0 Sold</p>
+        {/* <p className="text-gray-400">0 Sold</p> */}
       </td>
-      <td className="p-4">Electronics</td>
+      <td className="p-4">{product.category}</td>
       <td className="p-4">
         <div className="flex gap-2">
           <Button

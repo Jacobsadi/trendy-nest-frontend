@@ -169,10 +169,13 @@
 
 import { Buyer, BuyerAddress, EnrichedOrder, RawOrder } from "@/lib/types";
 // import { MOCK_RAW_ORDERS, MOCK_BUYERS } from "@/lib/mockData"; // If using mocks
-
+const ORDERS_API =
+  process.env.NEXT_PUBLIC_ORDERS_API || "http://localhost:3002/orders";
+const USERS_API =
+  process.env.NEXT_PUBLIC_USERS_API || "http://localhost:3004/users";
 export async function fetchOrders(): Promise<RawOrder[]> {
   try {
-    const res = await fetch("http://localhost:3002/orders");
+    const res = await fetch(ORDERS_API);
     if (!res.ok) {
       console.error(
         "Failed to fetch orders: Bad response from server",
@@ -192,7 +195,7 @@ export async function fetchOrders(): Promise<RawOrder[]> {
 export async function fetchBuyerData(buyerId: string): Promise<Buyer | null> {
   if (!buyerId) return null;
   try {
-    const res = await fetch(`http://localhost:3004/users/${buyerId}`);
+    const res = await fetch(`${USERS_API}/${buyerId}`);
     if (!res.ok) {
       console.error(`Failed to fetch buyer ${buyerId}:`, res.status);
       return null;

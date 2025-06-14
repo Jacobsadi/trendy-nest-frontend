@@ -77,7 +77,7 @@ const isBuyerRoute = createRouteMatcher(["/buyer(.*)"]);
 export default clerkMiddleware(async (auth, req) => {
   const authResult = await auth();
   const userId = authResult.userId;
-
+  const USERS_API_BASE = "https://trendy-nest-production.up.railway.app/users";
   const isProtectedRoute =
     isAdminRoute(req) || isSellerRoute(req) || isBuyerRoute(req);
 
@@ -87,12 +87,13 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (!userId) return NextResponse.next();
 
-  console.log("USER ID ===================>", userId);
+  // console.log("USER ID ===================>", userId);
 
   let role: "ADMIN" | "SELLER" | "BUYER" | undefined;
 
   try {
-    const res = await fetch(`http://localhost:3004/users/${userId}`);
+    const res = await fetch(`${USERS_API_BASE}/${userId}`);
+    // const res = await fetch(`http://localhost:3004/users/${userId}`);
 
     if (res.status === 404) {
       console.warn("⏳ User not in backend yet — skipping check");
@@ -102,7 +103,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (res.ok) {
       const userData = await res.json();
       role = userData.role;
-      console.log("✅ BACKEND ROLE ==========>", role);
+      // console.log("✅ BACKEND ROLE ==========>", role);
     } else {
       console.warn("❌ Unexpected backend error:", await res.text());
       return NextResponse.redirect(new URL("/unauthorized", req.url));

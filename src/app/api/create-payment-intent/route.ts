@@ -10,6 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET!, {
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { cartItems, buyerId } = body;
+  const ORDERS_API =
+    process.env.NEXT_PUBLIC_ORDERS_API || "http://localhost:3002/orders";
 
   const total = cartItems.reduce(
     (sum: number, item: any) => sum + item.price * item.quantity,
@@ -17,7 +19,7 @@ export async function POST(req: NextRequest) {
   );
 
   // Create order in your backend
-  const orderRes = await fetch("http://localhost:3002/orders", {
+  const orderRes = await fetch(ORDERS_API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

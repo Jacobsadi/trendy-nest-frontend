@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
-import Image from "next/image";
+import { Star, UserRound } from "lucide-react";
 
 const testimonials = [
   {
@@ -11,7 +10,6 @@ const testimonials = [
       "I've been shopping here for years and the quality of products never disappoints. The customer service is exceptional!",
     author: "Sarah Johnson",
     role: "Loyal Customer",
-    avatar: "/placeholder.svg?height=96&width=96&text=SJ",
     rating: 5,
   },
   {
@@ -20,7 +18,6 @@ const testimonials = [
       "Found so many unique items that I couldn't find anywhere else. Shipping was fast and everything arrived in perfect condition.",
     author: "Michael Chen",
     role: "First-time Buyer",
-    avatar: "/placeholder.svg?height=96&width=96&text=MC",
     rating: 5,
   },
   {
@@ -29,7 +26,6 @@ const testimonials = [
       "The attention to detail in every product I've purchased is amazing. You can really tell these are made with care.",
     author: "Emma Rodriguez",
     role: "Regular Shopper",
-    avatar: "/placeholder.svg?height=96&width=96&text=ER",
     rating: 4,
   },
 ];
@@ -100,13 +96,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="mt-8 flex items-center gap-x-4">
-                <Image
-                  className="h-12 w-12 rounded-full bg-gray-50"
-                  src={testimonial.avatar || "/placeholder.svg"}
-                  alt={testimonial.author}
-                  width={48}
-                  height={48}
-                />
+                <UserRound className="h-12 w-12 rounded-full bg-gray-100 text-gray-400 p-2" />
                 <div>
                   <div className="text-base font-semibold leading-6 text-gray-900">
                     {testimonial.author}

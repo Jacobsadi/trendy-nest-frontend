@@ -27,13 +27,15 @@ export default function CheckoutPage() {
   ); // convert to cents
   const { user } = useUser();
   const buyerId = user?.id;
-  console.log("the ID===========>", buyerId);
+  const ORDERS_API =
+    process.env.NEXT_PUBLIC_ORDERS_API || "http://localhost:3002/orders";
+
   useEffect(() => {
     const makeOrder = async () => {
       if (hasCreatedOrder.current || cartItems.length === 0) return;
       hasCreatedOrder.current = true; // ✅ prevent re-run
 
-      const response = await fetch("http://localhost:3002/orders", {
+      const response = await fetch(ORDERS_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

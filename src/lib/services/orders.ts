@@ -13,6 +13,8 @@ export interface OrderRow {
   deliveryNumber: string;
   orderStatus: string;
 }
+const ORDERS_API =
+  process.env.NEXT_PUBLIC_ORDERS_API || "http://localhost:3002/orders";
 
 function mapRawOrderToOrderRow(
   order: RawOrder,
@@ -41,7 +43,7 @@ function mapRawOrderToOrderRow(
 
 export async function fetchOrders(): Promise<OrderRow[]> {
   try {
-    const res = await fetch("http://localhost:3002/orders");
+    const res = await fetch(ORDERS_API);
     if (!res.ok) throw new Error("Bad response");
 
     const data: RawOrder[] = await res.json();
@@ -50,7 +52,8 @@ export async function fetchOrders(): Promise<OrderRow[]> {
       const enrichedOrders: OrderRow[] = await Promise.all(
         data.map(async (order) => {
           try {
-            const buyerData = await getUserById(order.buyerId);
+            const buyer = await getUserById(order.buyerId);
+            const buyerData = await buyer.json();
 
             const address = buyerData?.addresses?.home
               ? `${buyerData.addresses.home.street}, ${buyerData.addresses.home.city}, ${buyerData.addresses.home.country}`
@@ -76,7 +79,7 @@ export async function fetchOrders(): Promise<OrderRow[]> {
 }
 export async function fetchOrdersByBuyer(buyerId: string) {
   try {
-    const res = await fetch(`http://localhost:3002/orders/buyer/${buyerId}`);
+    const res = await fetch(`${ORDERS_API}/buyer/${buyerId}`);
     if (!res.ok) throw new Error("Bad response");
 
     const data: RawOrder[] = await res.json();
@@ -88,7 +91,7 @@ export async function fetchOrdersByBuyer(buyerId: string) {
 }
 export async function updateOrder(orderId: string, data: Record<string, any>) {
   try {
-    const response = await fetch(`http://localhost:3002/orders/${orderId}`, {
+    const response = await fetch(`${ORDERS_API}/${orderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -111,4 +114,39 @@ export function buildStats(rows: OrderRow[]) {
     acc[r.orderStatus] = (acc[r.orderStatus] || 0) + 1;
     return acc;
   }, {});
+}
+export async function fetchOrderById(
+  orderId: string
+): Promise<RawOrder & { buyerEmail: string; buyerAddress: string }> {
+  try {
+    const res = await fetch(`${ORDERS_API}/${orderId}`);
+    if (!res.ok) throw new Error("Bad response");
+
+    const order: RawOrder = await res.json();
+
+    try {
+      const buyerRes = await getUserById(order.buyerId);
+      const buyerData = await buyerRes.json();
+
+      const buyerAddress = buyerData?.addresses?.home
+        ? `${buyerData.addresses.home.street}, ${buyerData.addresses.home.city}, ${buyerData.addresses.home.country}`
+        : "Unknown Address";
+
+      return {
+        ...order,
+        buyerEmail: buyerData?.email || "Unknown",
+        buyerAddress,
+      };
+    } catch (error) {
+      console.warn(`Failed to fetch user for order ${orderId}:`, error);
+      return {
+        ...order,
+        buyerEmail: "Unknown",
+        buyerAddress: "Unknown Address",
+      };
+    }
+  } catch (err) {
+    console.error(`Failed to fetch order ${orderId}:`, err);
+    throw err;
+  }
 }

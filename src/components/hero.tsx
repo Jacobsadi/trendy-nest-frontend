@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { ContainerTextFlip } from "./ui/container-text-flip";
 import { TextGenerateEffect } from "./ui/text-generate-effect";
 const words = `Discover effective, luxurious, and results-driven skincare and makeup designed to elevate your natural beauty. 
@@ -40,13 +41,15 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              <Button
-                size="lg"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 rounded-xl text-lg group"
-              >
-                <ShoppingBag className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                Start Shopping
-              </Button>
+              <Link href="/buyer/products">
+                <Button
+                  size="lg"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 rounded-xl text-lg group"
+                >
+                  <ShoppingBag className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
+                  Start Shopping
+                </Button>
+              </Link>
             </motion.div>
             <motion.div
               className="mt-6 flex items-center gap-6"

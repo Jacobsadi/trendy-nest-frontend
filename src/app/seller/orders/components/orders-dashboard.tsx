@@ -106,6 +106,7 @@ async function enrichOrdersWithBuyerData(
   const enrichedOrders = await Promise.all(
     orders.map(async (order) => {
       const buyerData = await fetchBuyerData(order.buyerId);
+
       return {
         ...order,
         buyerEmail: buyerData?.email || "N/A",
@@ -115,11 +116,17 @@ async function enrichOrdersWithBuyerData(
       };
     })
   );
+
   return enrichedOrders;
 }
 
 export default async function OrdersDashboard() {
   const rawOrders: RawOrder[] = await fetchOrders();
+  console.log("Order Items ========================================>");
+  rawOrders.forEach((order) => {
+    console.log(`Order #${order.orderNumber}:`, order.items);
+  });
+
   const enrichedOrders: EnrichedOrder[] = await enrichOrdersWithBuyerData(
     rawOrders
   );

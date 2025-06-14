@@ -16,7 +16,7 @@ export default function ProfilePage() {
       {/* Add the ChatBot with different position and context */}
       <ChatBot
         position="bottom-left"
-        initialMessage="👋 Welcome to your profile page! Need help managing your account?"
+        initialMessage="👋 Welcome to my store, do you need help or guidance with any product?"
         pageContext="user profile"
       />
     </main>

@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:3004/users";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_USERS_API || "http://localhost:3004/users";
 
 export async function getAllUsers() {
   const res = await fetch(BASE_URL, { cache: "no-store" });
@@ -6,10 +7,14 @@ export async function getAllUsers() {
   return await res.json();
 }
 
+// export async function getUserById(userId: string) {
+//   const res = await fetch(`${BASE_URL}/${userId}`, { cache: "no-store" });
+//   if (!res.ok) throw new Error("User not found");
+//   return await res.json();
+// }
 export async function getUserById(userId: string) {
   const res = await fetch(`${BASE_URL}/${userId}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("User not found");
-  return await res.json();
+  return res;
 }
 
 export async function createOrFindUser(data: {

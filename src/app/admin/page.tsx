@@ -947,15 +947,15 @@ export default function AdminDashboard() {
                                     user.role === "ADMIN"
                                       ? "destructive"
                                       : user.role === "SELLER"
-                                      ? "default"
-                                      : "secondary"
+                                        ? "default"
+                                        : "secondary"
                                   }
                                   className={
                                     user.role === "ADMIN"
                                       ? "bg-red-900/30 text-red-400 hover:bg-red-900/40"
                                       : user.role === "SELLER"
-                                      ? "bg-blue-900/30 text-blue-400 hover:bg-blue-900/40"
-                                      : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                        ? "bg-blue-900/30 text-blue-400 hover:bg-blue-900/40"
+                                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                   }
                                 >
                                   {user.role}
@@ -1140,8 +1140,8 @@ export default function AdminDashboard() {
                                     product.stock > 50
                                       ? "bg-green-400"
                                       : product.stock > 10
-                                      ? "bg-yellow-400"
-                                      : "bg-red-400"
+                                        ? "bg-yellow-400"
+                                        : "bg-red-400"
                                   }`}
                                 ></div>
                                 <span className="text-gray-300">
