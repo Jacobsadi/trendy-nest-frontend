@@ -1,5 +1,4 @@
-import { OrderRow, Product } from "./types";
-export const MOCK_ORDERS: OrderRow[] = [
+export const MOCK_ORDERS: any[] = [
   {
     id: "#583488/80",
     createdAt: "Apr 23, 2024",
@@ -34,7 +33,7 @@ export const MOCK_ORDERS: OrderRow[] = [
     orderStatus: "Completed",
   },
 ];
-export const mockProducts: Product[] = [
+export const mockProducts: any[] = [
   {
     id: "3",
     title: "Ultrawide Monitor",

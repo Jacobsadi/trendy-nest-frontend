@@ -99,7 +99,7 @@ export default function BuyerOrderHistoryPage() {
         });
     }
   }, [user?.id]);
-  console.log("Orders ==========================================> ", rawOrders);
+
   // Filter and sort orders
   const filteredAndSortedOrders = useMemo(() => {
     let filtered = [...rawOrders];

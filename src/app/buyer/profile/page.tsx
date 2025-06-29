@@ -228,7 +228,7 @@ export default function ProfilePage() {
 
   const { user } = useUser();
   const userId = user?.id;
-  console.log("USER DATA ======================>", user?.fullName);
+
   const email = user?.emailAddresses[0]?.emailAddress || "";
   const [formData, setFormData] = useState({
     username: "",
