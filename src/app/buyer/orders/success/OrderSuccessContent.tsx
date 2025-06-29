@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/lib/services/cartStore";
-import { fetchOrdersByBuyer } from "@/lib/services/orders";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import {
@@ -26,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface OrderItem {
   id: string;
@@ -59,37 +58,57 @@ export default function OrderSuccessPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const toggleCart = () => setIsCartOpen(!isCartOpen);
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const hasCreatedOrderRef = useRef(false); // ✅ flag to prevent re-creation
   useEffect(() => {
-    async function fetchOrderDetails() {
-      if (!orderId || !user) return;
+    async function createOrderAfterPayment() {
+      if (!user || hasCreatedOrderRef.current || cartItems.length === 0) return;
 
       try {
         setLoading(true);
+        hasCreatedOrderRef.current = true; // ✅ mark as created before starting
 
-        const orders = await fetchOrdersByBuyer(user.id);
-        const currentOrder = orders.find((o) => o.id === orderId);
+        const buyerId = user.id;
+        const items = cartItems.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        }));
+        const total = Math.round(
+          cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+        );
 
-        if (!currentOrder) {
-          console.error("Order not found.");
-          router.push("/buyer");
-          return;
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_ORDERS_API}/create-after-payment`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ buyerId, total, items }),
+          }
+        );
+
+        const data = await response.json();
+        const newOrder = data.order;
+
+        if (!newOrder) {
+          throw new Error("Order creation failed");
         }
 
-        // ✅ Default undefined items to []
         setOrderDetails({
-          ...currentOrder,
-          items: currentOrder.items ?? [],
+          ...newOrder,
+          items: newOrder.items ?? [],
         });
+
+        useCartStore.getState().clearCart?.();
       } catch (error) {
-        console.error("Error fetching order details:", error);
-        router.push("/buyer");
+        console.error("Error creating order:", error);
+        // router.push("/buyer");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchOrderDetails();
-  }, [orderId, user, router]);
+    createOrderAfterPayment();
+  }, [user, cartItems]);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
