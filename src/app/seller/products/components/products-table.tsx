@@ -2,7 +2,6 @@ import { mockProducts } from "@/lib/mockData";
 import { fetchProducts } from "@/lib/services/products";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -45,9 +44,7 @@ export default async function ProductsTable() {
         <table className="w-full">
           <thead>
             <tr className="border-t border-b border-gray-700 bg-gray-800">
-              <th className="p-4 text-left">
-                <Checkbox />
-              </th>
+              <th className="p-4 text-left">{/* <Checkbox /> */}</th>
               <th className="p-4 text-left text-gray-400">Product Name</th>
               <th className="p-4 text-left text-gray-400">Price</th>
               <th className="p-4 text-left text-gray-400">Stock</th>

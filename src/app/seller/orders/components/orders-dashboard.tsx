@@ -122,14 +122,13 @@ async function enrichOrdersWithBuyerData(
 
 export default async function OrdersDashboard() {
   const rawOrders: RawOrder[] = await fetchOrders();
-  console.log("Order Items ========================================>");
+
   rawOrders.forEach((order) => {
     console.log(`Order #${order.orderNumber}:`, order.items);
   });
 
-  const enrichedOrders: EnrichedOrder[] = await enrichOrdersWithBuyerData(
-    rawOrders
-  );
+  const enrichedOrders: EnrichedOrder[] =
+    await enrichOrdersWithBuyerData(rawOrders);
   const stats = buildStats(enrichedOrders); // Use enriched orders for stats
 
   return (

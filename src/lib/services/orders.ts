@@ -150,3 +150,19 @@ export async function fetchOrderById(
     throw err;
   }
 }
+export async function deleteOrder(orderId: string) {
+  try {
+    const response = await fetch(`${ORDERS_API}/${orderId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete order ${orderId}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    throw error;
+  }
+}

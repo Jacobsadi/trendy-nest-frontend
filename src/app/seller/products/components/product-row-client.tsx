@@ -2,9 +2,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { deleteProduct } from "@/lib/services/products";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,9 +26,7 @@ export default function ProductRowClient({ product }: { product: any }) {
 
   return (
     <tr className="border-b border-gray-700 hover:bg-gray-750">
-      <td className="p-4">
-        <Checkbox />
-      </td>
+      <td className="p-4">{/* <Checkbox /> */}</td>
       <td className="p-4">
         <div className="flex items-center gap-3">
           <div className="w-16 h-16 bg-gray-700 rounded-md overflow-hidden flex items-center justify-center">
@@ -54,13 +51,13 @@ export default function ProductRowClient({ product }: { product: any }) {
       <td className="p-4">{product.category}</td>
       <td className="p-4">
         <div className="flex gap-2">
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-gray-400 hover:text-white"
           >
             <Eye className="h-4 w-4" />
-          </Button>
+          </Button> */}
           <Link href={`/seller/products/${product.id}/edit`}>
             <Button
               variant="ghost"
