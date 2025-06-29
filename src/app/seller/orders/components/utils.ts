@@ -1,170 +1,3 @@
-// // src/app/seller/orders/components/utils.ts
-
-// import { MOCK_ORDERS } from "@/lib/mockData";
-// import { OrderRow, RawOrder } from "@/lib/types";
-
-// export async function fetchOrders(): Promise<OrderRow[]> {
-//   try {
-//     const res = await fetch("http://localhost:3002/orders");
-//     if (!res.ok) throw new Error("Bad response");
-
-//     const data: RawOrder[] = await res.json();
-//     if (Array.isArray(data) && data.length) {
-//       const enrichedOrders = await Promise.all(
-//         data.map(async (order) => {
-//           try {
-//             const buyerRes = await fetch(
-//               `http://localhost:3004/users/${order.buyerId}`
-//             );
-//             const buyerData = await buyerRes.json();
-
-//             console.log("BUYER DATA ===================> ", buyerData);
-
-//             const address = buyerData?.addresses?.home;
-//             const formattedAddress = address
-//               ? `${address.street}, ${address.city}, ${address.country}`
-//               : "Unknown Address";
-
-//             return {
-//               id: buyerData.email,
-//               createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//               }),
-//               customer: formattedAddress,
-//               priority: "Normal",
-//               total: `$${Number(order.total).toFixed(2)}`,
-//               paymentStatus: (order.status === "PENDING"
-//                 ? "Unpaid"
-//                 : "Paid") as "Paid" | "Unpaid",
-
-//               items: order.items?.length ?? 0,
-//               deliveryNumber: "-",
-//               orderStatus: order.status,
-//             };
-//           } catch {
-//             // fallback if buyer fetch fails
-//             return {
-//               id: order.id,
-//               createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//               }),
-//               customer: "Unknown Address",
-//               priority: "Normal",
-//               total: `$${Number(order.total).toFixed(2)}`,
-//               paymentStatus: (order.status === "PENDING"
-//                 ? "Unpaid"
-//                 : "Paid") as "Paid" | "Unpaid",
-
-//               items: order.items?.length ?? 0,
-//               deliveryNumber: "-",
-//               orderStatus: order.status,
-//             };
-//           }
-//         })
-//       );
-
-//       return enrichedOrders;
-//     }
-//   } catch (err) {
-//     console.error("Failed to fetch orders or buyers:", err);
-//   }
-
-//   return MOCK_ORDERS;
-// }
-
-// export function buildStats(rows: OrderRow[]) {
-//   return rows.reduce<Record<string, number>>((acc, r) => {
-//     acc[r.orderStatus] = (acc[r.orderStatus] || 0) + 1;
-//     return acc;
-//   }, {});
-// }
-// src/app/seller/orders/components/utils.ts
-
-// import { MOCK_ORDERS } from "@/lib/mockData";
-// import { OrderRow, RawOrder } from "@/lib/types";
-
-// export async function fetchOrders(): Promise<OrderRow[]> {
-//   try {
-//     const res = await fetch("http://localhost:3002/orders");
-//     if (!res.ok) throw new Error("Bad response");
-
-//     const data: RawOrder[] = await res.json();
-//     if (Array.isArray(data) && data.length) {
-//       const enrichedOrders = await Promise.all(
-//         data.map(async (order) => {
-//           try {
-//             const buyerRes = await fetch(
-//               `http://localhost:3004/users/${order.buyerId}`
-//             );
-//             const buyerData = await buyerRes.json();
-
-//             const address = buyerData?.addresses;
-//             const formattedAddress = address
-//               ? `${address.line1}, ${address.city}, ${address.country}`
-//               : "Unknown Address";
-
-//             return {
-//               id: buyerData.email, // used for customer email
-//               orderNumber: "order.orderNumber",
-//               createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//               }),
-//               customer: formattedAddress,
-//               priority: "Normal",
-//               total: `$${Number(order.total).toFixed(2)}`,
-//               paymentStatus: (order.status === "PENDING"
-//                 ? "Unpaid"
-//                 : "Paid") as "Paid" | "Unpaid",
-//               items: order.items?.length ?? 0,
-//               deliveryNumber: "-",
-//               orderStatus: order.status,
-//             };
-//           } catch {
-//             return {
-//               id: order.buyerId,
-//               orderNumber: "order.orderNumber",
-//               createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//               }),
-//               customer: "Unknown Address",
-//               priority: "Normal",
-//               total: `$${Number(order.total).toFixed(2)}`,
-//               paymentStatus: (order.status === "PENDING"
-//                 ? "Unpaid"
-//                 : "Paid") as "Paid" | "Unpaid",
-//               items: order.items?.length ?? 0,
-//               deliveryNumber: "-",
-//               orderStatus: order.status,
-//             };
-//           }
-//         })
-//       );
-
-//       return enrichedOrders;
-//     }
-//   } catch (err) {
-//     console.error("Failed to fetch orders or buyers:", err);
-//   }
-
-//   return MOCK_ORDERS;
-// }
-
-// export function buildStats(rows: OrderRow[]) {
-//   return rows.reduce<Record<string, number>>((acc, r) => {
-//     acc[r.orderStatus] = (acc[r.orderStatus] || 0) + 1;
-//     return acc;
-//   }, {});
-// }
-// src/app/seller/orders/components/utils.ts
-
 // src/app/seller/orders/components/utils.ts
 
 import { Buyer, BuyerAddress, EnrichedOrder, RawOrder } from "@/lib/types";
@@ -175,7 +8,8 @@ const USERS_API =
   process.env.NEXT_PUBLIC_USERS_API || "http://localhost:3004/users";
 export async function fetchOrders(): Promise<RawOrder[]> {
   try {
-    const res = await fetch(ORDERS_API);
+    const res = await fetch(ORDERS_API, { cache: "no-store" });
+
     if (!res.ok) {
       console.error(
         "Failed to fetch orders: Bad response from server",
@@ -195,7 +29,7 @@ export async function fetchOrders(): Promise<RawOrder[]> {
 export async function fetchBuyerData(buyerId: string): Promise<Buyer | null> {
   if (!buyerId) return null;
   try {
-    const res = await fetch(`${USERS_API}/${buyerId}`);
+    const res = await fetch(`${USERS_API}/${buyerId}`, { cache: "no-store" });
     if (!res.ok) {
       console.error(`Failed to fetch buyer ${buyerId}:`, res.status);
       return null;

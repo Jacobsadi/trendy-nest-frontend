@@ -679,35 +679,3 @@ export interface EnrichedOrder extends RawOrder {
   buyerEmail: string;
   buyerAddress: string; // Formatted address string
 }
-
-// MOCK_RAW_ORDERS can be defined here if needed for fallback in utils.ts
-/*
-export const MOCK_RAW_ORDERS: RawOrder[] = [
-  {
-    id: "mock-8b94b89c",
-    orderNumber: "MOCK-ORD-153716",
-    buyerId: "mock-user_valid", // Use an ID that might have a mock buyer
-    total: "160.50",
-    status: "PENDING",
-    createdAt: "2025-05-18T15:37:16.221Z",
-    items: [{ id: "item1", orderId: "mock-8b94b89c", productId: "prod1", quantity: 1, price: "160.50" }]
-  },
-];
-// Mock buyer data if you want to test enrichment offline
-export const MOCK_BUYERS: Record<string, Buyer> = {
-  "mock-user_valid": {
-    id: "mock-user_valid",
-    email: "mock.buyer@example.com",
-    role: "BUYER",
-    addresses: {
-      city: "Mockville",
-      line1: "123 Mock St",
-      state: "MS",
-      country: "MC",
-      zipCode: "00000"
-    },
-    createdAt: "2025-01-01T00:00:00.000Z",
-    updatedAt: "2025-01-01T00:00:00.000Z"
-  }
-};
-*/

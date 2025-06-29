@@ -79,10 +79,37 @@ export default function CheckoutForm() {
     if (result.error) {
       console.error("❌ Payment failed:", result.error.message, result.error);
       alert(result.error.message);
+    } else {
+      console.log("✅ Payment submitted, redirecting...", result);
+      // You likely won't reach here as the user is redirected
     }
 
     setLoading(false);
   };
+  //   const handleSubmit = async (e: FormEvent) => {
+  //   e.preventDefault();
+  //   if (!stripe || !elements) return;
+
+  //   setLoading(true);
+  //   console.log("🧾 Submitting payment for order:");
+
+  //   const result = await stripe.confirmPayment({
+  //     elements,
+  //     confirmParams: {
+  //       return_url: `https://trendy-nest-frontend.vercel.app/buyer/orders/success`,
+  //     },
+  //   });
+
+  //   if (result.error) {
+  //     console.error("❌ Payment failed:", result.error.message, result.error);
+  //     alert(result.error.message);
+  //   } else {
+  //     console.log("✅ Payment submitted, redirecting...", result);
+  //     // You likely won't reach here as the user is redirected
+  //   }
+
+  //   setLoading(false);
+  // };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
