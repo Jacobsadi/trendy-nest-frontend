@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/lib/services/cartStore";
+import {
+  fetchProductById,
+  updateProductQuantity,
+} from "@/lib/services/products";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import {
@@ -92,7 +96,25 @@ export default function OrderSuccessPage() {
         if (!newOrder) {
           throw new Error("Order creation failed");
         }
+        // ✅ Decrease product quantities
+        await Promise.all(
+          items.map(async (item) => {
+            try {
+              const product = await fetchProductById(item.productId);
+              const updatedQuantity = Math.max(
+                product.quantity - item.quantity,
+                0
+              );
 
+              await updateProductQuantity(item.productId, updatedQuantity);
+            } catch (err) {
+              console.error(
+                `Failed to update quantity for product ${item.productId}:`,
+                err
+              );
+            }
+          })
+        );
         setOrderDetails({
           ...newOrder,
           items: newOrder.items ?? [],

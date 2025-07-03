@@ -1117,7 +1117,7 @@ export default function AdminDashboard() {
                                     {product.title}
                                   </div>
                                   <div className="text-xs text-gray-400">
-                                    {product.description}
+                                    {/* {product.description} */}
                                   </div>
                                 </div>
                               </div>

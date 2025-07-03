@@ -65,7 +65,7 @@ export function TopProducts({ products }: TopProductsProps) {
                   <span>${product.revenue.toFixed(2)}</span>
                 </div>
               </div>
-              <Link href={`/seller/products/${product.id}`}>
+              <Link href={`/seller/products/${product.id}/edit`}>
                 <Button
                   variant="ghost"
                   size="icon"

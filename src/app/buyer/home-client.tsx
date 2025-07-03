@@ -2,12 +2,12 @@
 "use client";
 
 import Hero from "@/components/hero";
+import InfiniteProductScroller from "@/components/InfiniteProductScroller";
 import { useCartStore } from "@/lib/services/cartStore";
 import type { Product } from "@/lib/types";
 import { useState } from "react";
 import Cart from "./components/cart";
 import Header from "./components/header";
-import ProductGrid from "./components/product-grid";
 import Testimonials from "./components/testimonials";
 import WhyShopWithUs from "./components/why-shop-with-us";
 
@@ -34,9 +34,11 @@ export default function HomeClient({ products }: HomeClientProps) {
           <h1 className="text-2xl font-bold mb-6 mt-4">Featured Products</h1>
 
           <div className="mb-20">
-            <ProductGrid
+            <InfiniteProductScroller
               products={products}
-              addToCart={(product: any) => addToCart(product, 1)}
+              addToCart={(product) => addToCart(product, 1)}
+              direction="left"
+              speed="normal"
             />
           </div>
         </div>

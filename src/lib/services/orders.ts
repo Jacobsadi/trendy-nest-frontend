@@ -25,14 +25,14 @@ function mapRawOrderToOrderRow(
     order.status === "PENDING" ? "Unpaid" : "Paid";
 
   return {
-    id: buyerEmail || order.id || "N/A", // Added fallback for potential undefined id
+    id: order.id || "N/A", // Added fallback for potential undefined id
     createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
     }),
     customer: address,
-    priority: "Normal",
+    priority: order.orderNumber,
     total: `$${Number(order.total).toFixed(2)}`,
     paymentStatus,
     items: order.items?.length ?? 0,

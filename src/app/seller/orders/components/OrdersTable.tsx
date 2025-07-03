@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import { EnrichedOrder } from "@/lib/types"; // Import EnrichedOrder
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 function OrderRowDisplay({ order }: { order: EnrichedOrder }) {
   const formattedDate = new Date(order.createdAt).toLocaleDateString("en-US", {
@@ -146,10 +148,20 @@ function OrderRowDisplay({ order }: { order: EnrichedOrder }) {
 }
 
 export default function OrdersTable({ orders }: { orders: EnrichedOrder[] }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredOrders = orders.filter((order) =>
+    order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
     <div className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
       <div className="p-4 flex justify-between items-center">
         <h2 className="text-lg font-semibold">All Order List</h2>
+        <Input
+          placeholder="Search by Order #"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full sm:w-64 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+        />
         <Select defaultValue="thisMonth">
           <SelectTrigger className="w-[180px] bg-gray-700 border-gray-600">
             <SelectValue placeholder="Filter by period" />
@@ -179,7 +191,7 @@ export default function OrdersTable({ orders }: { orders: EnrichedOrder[] }) {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
+            {filteredOrders.map((order) => (
               <OrderRowDisplay key={order.id} order={order} />
             ))}
           </tbody>

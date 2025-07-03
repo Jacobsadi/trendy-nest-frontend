@@ -35,15 +35,15 @@ const iconMap = {
   TrendingUp,
 };
 
-const salesData = [
-  { name: "Jan", sales: 4000 },
-  { name: "Feb", sales: 3000 },
-  { name: "Mar", sales: 5000 },
-  { name: "Apr", sales: 4500 },
-  { name: "May", sales: 6000 },
-  { name: "Jun", sales: 5500 },
-  { name: "Jul", sales: 7000 },
-];
+// const salesData = [
+//   { name: "Jan", sales: 4000 },
+//   { name: "Feb", sales: 3000 },
+//   { name: "Mar", sales: 5000 },
+//   { name: "Apr", sales: 4500 },
+//   { name: "May", sales: 6000 },
+//   { name: "Jun", sales: 5500 },
+//   { name: "Jul", sales: 7000 },
+// ];
 
 const topProducts = [
   {
@@ -76,9 +76,14 @@ type Metric = {
 export default function SellerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<any[]>([]); // ✅ store real products
+  const [topProducts, setTopProducts] = useState<any[]>([]);
+
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [metricsData, setMetricsData] = useState<Metric[]>([]);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [salesData, setSalesData] = useState<{ name: string; sales: number }[]>(
+    []
+  );
 
   useEffect(() => {
     async function loadData() {
@@ -86,8 +91,17 @@ export default function SellerDashboard() {
         fetchOrders(),
         fetchProducts(),
       ]);
+
+      const topProducts = productData.slice(0, 2).map((p) => ({
+        id: p.id,
+        name: p.title, // Your API returns `title`, but TopProducts expects `name`
+        image: p.images?.[0] || "/placeholder.svg",
+        sales: Math.floor(Math.random() * 50) + 10, // Or pull real sales data if available
+        revenue: p.price * (Math.floor(Math.random() * 50) + 10),
+        stock: p.quantity,
+      }));
+      setTopProducts(topProducts);
       const simpleRecentOrders = orders.slice(0, 2).map((order: any) => {
-        console.log("===============================================", order);
         const total =
           typeof order.total === "string"
             ? parseFloat(order.total.replace(/[^0-9.]/g, ""))
@@ -96,19 +110,56 @@ export default function SellerDashboard() {
         return {
           id: order.id,
           orderNumber: order.orderNumber,
-          customer: order.orderNumber || "Unknoefefwn",
+          customer: order.priority || "Unknoefefwn",
 
           // 👈 show last 6 chars for uniqueness
           date: order.createdAt,
-          status: order.status || "UNKNOWN",
+          status: order.orderStatus || "UNKNOWNbhjg",
           total,
-          items: Array.isArray(order.items) ? order.items.length : 0,
+          items: order.items,
         };
       });
 
+      const monthlySales: Record<string, number> = {};
+      orders.forEach((order) => {
+        const date = new Date(order.createdAt);
+
+        const month = date.toLocaleString("default", { month: "short" }); // e.g., Jan, Feb
+        const rawTotal =
+          typeof order.total === "string"
+            ? order.total.replace(/[^0-9.]/g, "") // remove $ and commas
+            : order.total;
+        const total = parseFloat(rawTotal);
+
+        if (!isNaN(total)) {
+          monthlySales[month] = (monthlySales[month] || 0) + total;
+        }
+      });
+
+      // 🧠 Fill in all months to ensure complete chart
+      const allMonths = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      const dynamicSalesData = allMonths.map((month) => ({
+        name: month,
+        sales: monthlySales[month] || 0,
+      }));
+
+      setSalesData(dynamicSalesData); // <-- Add state for this
       setRecentOrders(simpleRecentOrders);
 
-      setRecentOrders(simpleRecentOrders);
       setProducts(productData);
 
       // --- Date setup for comparisons ---
@@ -202,7 +253,6 @@ export default function SellerDashboard() {
 
   const handlePeriodChange = (period: string) => {
     setSelectedPeriod(period);
-    console.log("Period changed to:", period);
   };
 
   if (isLoading) {

@@ -75,7 +75,22 @@ export async function updateProduct(
 
   return await response.json();
 }
+export async function updateProductQuantity(
+  productId: string,
+  quantity: number
+): Promise<Product> {
+  const response = await fetch(`${API_URL}/${productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ quantity }),
+  });
 
+  if (!response.ok) {
+    throw new Error(`Failed to update quantity for product ${productId}`);
+  }
+
+  return await response.json();
+}
 export async function deleteProduct(productId: string) {
   const res = await fetch(`${API_URL}/${productId}`, {
     method: "DELETE",
