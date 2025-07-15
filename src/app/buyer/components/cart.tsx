@@ -20,6 +20,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  console.log("Cart items are =======================>", cartItems);
   const tax = subtotal * 0.1; // 10% tax
   const total = subtotal + tax;
 
@@ -103,6 +104,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
                           }
+                          // disabled={item.quantity <= item.stock}
                         >
                           <Plus className="w-3 h-3" />
                         </Button>

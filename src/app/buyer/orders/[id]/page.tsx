@@ -29,6 +29,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "../../components/header";
+import { ImprovedActionsSection } from "./improved-actions-section";
 
 interface OrderItem {
   id: string;
@@ -59,7 +60,12 @@ export default function OrderDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sellerEmail, setSellerEmail] = useState<string | null>(null);
+  const [subject, setSubject] = useState("Order received - Thank you!");
+  const [message, setMessage] = useState(
+    "I received the order and I'm very happy with it!"
+  );
 
+  const [sending, setSending] = useState(false);
   const cartItems = useCartStore((state) => state.cartItems);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const toggleCart = () => setIsCartOpen(!isCartOpen);
@@ -176,8 +182,8 @@ export default function OrderDetailsPage() {
           status === "PENDING"
             ? "current"
             : status === "CANCELLED"
-            ? "canceled"
-            : "complete",
+              ? "canceled"
+              : "complete",
       },
       {
         name: "Shipped",
@@ -185,10 +191,10 @@ export default function OrderDetailsPage() {
           status === "SHIPPED"
             ? "current"
             : status === "DELIVERED"
-            ? "complete"
-            : status === "CANCELLED"
-            ? "canceled"
-            : "upcoming",
+              ? "complete"
+              : status === "CANCELLED"
+                ? "canceled"
+                : "upcoming",
       },
       {
         name: "Delivered",
@@ -196,8 +202,8 @@ export default function OrderDetailsPage() {
           status === "DELIVERED"
             ? "complete"
             : status === "CANCELLED"
-            ? "canceled"
-            : "upcoming",
+              ? "canceled"
+              : "upcoming",
       },
     ];
 
@@ -263,6 +269,39 @@ export default function OrderDetailsPage() {
 
   const statusSteps = getStatusSteps(order.status);
 
+  const handleSend = async () => {
+    if (!subject.trim() || !message.trim()) {
+      return alert("Please fill out both subject and message.");
+    }
+
+    setSending(true);
+    try {
+      const res = await fetch("/api/send-seller", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "sadi@graduate.utm.my",
+          orderId: order.orderNumber,
+          status: "Received", // still available for your template logic
+          subject, // buyer‑typed subject
+          content: message, // buyer‑typed message
+        }),
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        alert("Your confirmation email was sent!");
+      } else {
+        console.error(result);
+        alert("Failed to send email.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error sending email.");
+    } finally {
+      setSending(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <Header toggleCart={toggleCart} cartItemsCount={cartItemCount} />
@@ -343,10 +382,10 @@ export default function OrderDetailsPage() {
                             step.status === "complete"
                               ? "text-green-400"
                               : step.status === "current"
-                              ? "text-blue-400"
-                              : step.status === "canceled"
-                              ? "text-red-400"
-                              : "text-gray-400"
+                                ? "text-blue-400"
+                                : step.status === "canceled"
+                                  ? "text-red-400"
+                                  : "text-gray-400"
                           }`}
                         >
                           {step.name}
@@ -356,8 +395,8 @@ export default function OrderDetailsPage() {
                             {order.status === "PENDING"
                               ? "Your order is being processed"
                               : order.status === "SHIPPED"
-                              ? "Your order is on the way"
-                              : ""}
+                                ? "Your order is on the way"
+                                : ""}
                           </p>
                         )}
                       </div>
@@ -478,15 +517,21 @@ export default function OrderDetailsPage() {
                 </Button>
               </a>
             )}
+            {order.status === "DELIVERED" && (
+              <div>
+                {/* Example usage of ImprovedActionsSection - replace with your actual data */}
 
-            {order.status === "PENDING" && (
-              <Button
-                variant="outline"
-                className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-              >
-                <AlertCircle className="h-4 w-4 mr-2" />
-                Cancel Order
-              </Button>
+                <ImprovedActionsSection
+                  sellerEmail="sadi@graduate.utm.my"
+                  order={order}
+                  subject={subject}
+                  setSubject={setSubject}
+                  message={message}
+                  setMessage={setMessage}
+                  handleSend={handleSend}
+                  sending={sending}
+                />
+              </div>
             )}
           </div>
         </div>
